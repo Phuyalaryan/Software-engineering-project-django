@@ -1,0 +1,434 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+        Roboto, Helvetica, Arial, sans-serif;
+
+    background: #f4f6f9;
+    color: #172033;
+
+    min-height: 100vh;
+}
+
+
+/* =========================================
+   HEADER
+   ========================================= */
+
+header {
+    height: 72px;
+
+    background: #172033;
+
+    border-bottom: 1px solid #26334a;
+
+    display: flex;
+    align-items: center;
+
+    padding: 0 42px;
+}
+
+.header-content {
+    width: 100%;
+}
+
+header h1 {
+    color: #ffffff;
+
+    font-size: 20px;
+    font-weight: 700;
+
+    line-height: 1.2;
+}
+
+header p {
+    color: #aeb8c9;
+
+    font-size: 12px;
+    font-weight: 500;
+
+    margin-top: 4px;
+}
+
+
+/* =========================================
+   MAIN
+   ========================================= */
+
+.container {
+    width: 100%;
+    max-width: 900px;
+
+    margin: 0 auto;
+
+    padding: 50px 24px 70px;
+}
+
+
+/* =========================================
+   PROFILE CARD
+   ========================================= */
+
+.profile-card {
+    width: 100%;
+    max-width: 760px;
+
+    margin: 0 auto;
+
+    background: #ffffff;
+
+    border: 1px solid #dfe4eb;
+
+    border-radius: 16px;
+
+    padding: 34px;
+
+    box-shadow:
+        0 2px 6px rgba(23, 32, 51, 0.03),
+        0 12px 30px rgba(23, 32, 51, 0.07);
+}
+
+
+/* =========================================
+   PAGE HEADING
+   ========================================= */
+
+.page-heading {
+    text-align: center;
+
+    margin-bottom: 28px;
+}
+
+.page-heading h2 {
+    color: #172033;
+
+    font-size: 28px;
+    font-weight: 700;
+
+    line-height: 1.3;
+
+    margin-bottom: 7px;
+}
+
+.page-heading p {
+    color: #687386;
+
+    font-size: 14px;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================
+   PROFILE SUMMARY
+   ========================================= */
+
+.profile-summary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 15px;
+
+    padding: 22px;
+
+    margin-bottom: 25px;
+
+    background: #f8faff;
+
+    border: 1px solid #e2e9f5;
+
+    border-radius: 12px;
+}
+
+.profile-avatar {
+    width: 58px;
+    height: 58px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #2f6fed;
+
+    color: #ffffff;
+
+    font-size: 21px;
+    font-weight: 700;
+}
+
+.profile-summary-text h3 {
+    color: #172033;
+
+    font-size: 18px;
+    font-weight: 700;
+
+    margin-bottom: 3px;
+}
+
+.profile-summary-text p {
+    color: #687386;
+
+    font-size: 13px;
+}
+
+
+/* =========================================
+   PROFILE INFORMATION
+   ========================================= */
+
+.profile-info {
+    width: 100%;
+
+    overflow: hidden;
+
+    border: 1px solid #dfe4eb;
+
+    border-radius: 11px;
+
+    background: #ffffff;
+}
+
+.profile-row {
+    min-height: 57px;
+
+    display: grid;
+
+    grid-template-columns: 190px 1fr;
+
+    align-items: center;
+
+    gap: 20px;
+
+    padding: 11px 18px;
+
+    border-bottom: 1px solid #e9edf2;
+}
+
+.profile-row:last-child {
+    border-bottom: none;
+}
+
+.profile-row:hover {
+    background: #fafbfc;
+}
+
+.profile-label {
+    color: #687386;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.profile-value {
+    color: #172033;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    word-break: break-word;
+}
+
+
+/* =========================================
+   STATUS
+   ========================================= */
+
+.status-approved {
+    display: inline-flex;
+
+    width: fit-content;
+
+    padding: 5px 11px;
+
+    border-radius: 20px;
+
+    background: #e8f7ee;
+
+    color: #247a46;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.status-not-registered {
+    color: #9a6a00;
+
+    font-weight: 600;
+}
+
+
+/* =========================================
+   ACTION
+   ========================================= */
+
+.profile-actions {
+    margin-top: 25px;
+
+    padding-top: 22px;
+
+    border-top: 1px solid #e7eaf0;
+}
+
+.back-link {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-height: 42px;
+
+    padding: 0 17px;
+
+    background: #ffffff;
+
+    border: 1px solid #d5dce6;
+
+    border-radius: 8px;
+
+    color: #172033;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    text-decoration: none;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+.back-link:hover {
+    background: #f5f8fc;
+
+    border-color: #b9c5d5;
+
+    box-shadow: 0 3px 10px rgba(23, 32, 51, 0.08);
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================
+   TABLET
+   ========================================= */
+
+@media (max-width: 700px) {
+
+    header {
+        padding: 0 24px;
+    }
+
+    .container {
+        padding: 40px 20px 55px;
+    }
+
+    .profile-card {
+        padding: 27px;
+    }
+
+    .profile-row {
+        grid-template-columns: 160px 1fr;
+    }
+}
+
+
+/* =========================================
+   MOBILE
+   ========================================= */
+
+@media (max-width: 600px) {
+
+    header {
+        height: 66px;
+
+        padding: 0 16px;
+    }
+
+    header h1 {
+        font-size: 17px;
+    }
+
+    header p {
+        font-size: 11px;
+    }
+
+    .container {
+        padding: 32px 16px 45px;
+    }
+
+    .profile-card {
+        padding: 20px;
+
+        border-radius: 13px;
+    }
+
+    .page-heading {
+        margin-bottom: 23px;
+    }
+
+    .page-heading h2 {
+        font-size: 24px;
+    }
+
+    .page-heading p {
+        font-size: 13px;
+    }
+
+    .profile-summary {
+        padding: 18px;
+
+        margin-bottom: 20px;
+    }
+
+    .profile-avatar {
+        width: 52px;
+        height: 52px;
+
+        font-size: 19px;
+    }
+
+    .profile-summary-text h3 {
+        font-size: 16px;
+    }
+
+    .profile-summary-text p {
+        font-size: 12px;
+    }
+
+    .profile-row {
+        grid-template-columns: 1fr;
+
+        gap: 4px;
+
+        padding: 12px 14px;
+    }
+
+    .profile-label {
+        font-size: 11px;
+    }
+
+    .profile-value {
+        font-size: 13px;
+    }
+
+    .profile-actions {
+        margin-top: 22px;
+
+        padding-top: 19px;
+    }
+
+    .back-link {
+        width: 100%;
+    }
+}

@@ -1,0 +1,522 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Admin Dashboard | Smart Attendance
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{% static 'core/admindashboard.css' %}"
+    >
+
+</head>
+
+<body>
+
+    <main class="container">
+
+        <!-- =========================================
+             Dashboard Header
+             ========================================= -->
+
+        <section class="dashboard-header">
+
+            <div>
+
+                <h2>
+                    Administrator Dashboard
+                </h2>
+
+                <h2>
+                    Welcome
+                    {{ user.get_full_name|default:user.username }}
+                </h2>
+
+                <p class="form-description">
+                    Manage users, registrations, attendance
+                    and system activities.
+                </p>
+
+            </div>
+
+            <div class="system-brand">
+                Smart Attendance
+            </div>
+
+        </section>
+
+
+        <!-- =========================================
+             Dashboard Statistics
+             ========================================= -->
+
+        <section class="dashboard-stats">
+
+            <div class="stat-card">
+
+                <h3>
+                    Pending Student Registrations
+                </h3>
+
+                <p id="pendingStudentCount">
+                    {{ pending_student_count }}
+                </p>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <h3>
+                    Pending Teacher Registrations
+                </h3>
+
+                <p id="pendingTeacherCount">
+                    {{ pending_teacher_count }}
+                </p>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <h3>
+                    Total Students
+                </h3>
+
+                <p id="studentCount">
+                    {{ approved_student_count }}
+                </p>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <h3>
+                    Total Teachers
+                </h3>
+
+                <p id="teacherCount">
+                    {{ approved_teacher_count }}
+                </p>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <h3>
+                    System Status
+                </h3>
+
+                <p class="active-status">
+                    Active
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================================
+             Registration Approval
+             ========================================= -->
+
+        <section class="card dashboard-section">
+
+            <h2>
+                Registration Approval
+            </h2>
+
+            <p class="form-description">
+                Review and approve student and teacher
+                registrations.
+            </p>
+
+
+            <!-- Pending Students -->
+
+            <div class="management-block">
+
+                <h3>
+                    Pending Student Registrations
+                </h3>
+
+                <div class="table-container">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Student ID
+                                </th>
+
+                                <th>
+                                    Name
+                                </th>
+
+                                <th>
+                                    Email
+                                </th>
+
+                                <th>
+                                    Program
+                                </th>
+
+                                <th>
+                                    Semester
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th>
+                                    Action
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="pendingStudents">
+
+                            {% for student in pending_students %}
+
+                            <tr>
+
+                                <td>
+                                    {{ student.student_id|default:"Not Assigned" }}
+                                </td>
+
+                                <td>
+                                    {{ student.user.get_full_name }}
+                                </td>
+
+                                <td>
+                                    {{ student.user.email }}
+                                </td>
+
+                                <td>
+                                    {{ student.program }}
+                                </td>
+
+                                <td>
+                                    {{ student.semester }}
+                                </td>
+
+                                <td>
+                                    {{ student.status }}
+                                </td>
+
+                                <td>
+
+                                    <button
+                                        type="button"
+                                        class="btn"
+                                        onclick="location.href='{% url 'review_student' student.id %}'"
+                                    >
+                                        Review
+                                    </button>
+
+                                </td>
+
+                            </tr>
+
+                            {% empty %}
+
+                            <tr>
+
+                                <td colspan="7">
+                                    No pending student registrations.
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+            <!-- Pending Teachers -->
+
+            <div class="management-block">
+
+                <h3>
+                    Pending Teacher Registrations
+                </h3>
+
+                <div class="table-container">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Teacher ID
+                                </th>
+
+                                <th>
+                                    Name
+                                </th>
+
+                                <th>
+                                    Email
+                                </th>
+
+                                <th>
+                                    Department
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th>
+                                    Action
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="pendingTeachers">
+
+                            {% for teacher in pending_teachers %}
+
+                            <tr>
+
+                                <td>
+                                    {{ teacher.teacher_id|default:"Not Assigned" }}
+                                </td>
+
+                                <td>
+                                    {{ teacher.user.get_full_name }}
+                                </td>
+
+                                <td>
+                                    {{ teacher.user.email }}
+                                </td>
+
+                                <td>
+                                    {{ teacher.department }}
+                                </td>
+
+                                <td>
+                                    {{ teacher.status }}
+                                </td>
+
+                                <td>
+
+                                    <button
+                                        type="button"
+                                        class="btn"
+                                        onclick="location.href='{% url 'review_teacher' teacher.id %}'"
+                                    >
+                                        Review
+                                    </button>
+
+                                </td>
+
+                            </tr>
+
+                            {% empty %}
+
+                            <tr>
+
+                                <td colspan="6">
+                                    No pending teacher registrations.
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================================
+             User Management
+             ========================================= -->
+
+        <section class="card dashboard-section">
+
+            <h2>
+                User Management
+            </h2>
+
+            <p class="form-description">
+                View and manage registered students and teachers.
+            </p>
+
+            <div class="dashboard-actions">
+
+                <button
+                    type="button"
+                    class="btn"
+                    onclick="location.href='{% url 'view_students' %}'"
+                >
+                    View Students
+                </button>
+
+
+                <button
+                    type="button"
+                    class="btn"
+                    onclick="location.href='{% url 'view_teachers' %}'"
+                >
+                    View Teachers
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================================
+             Attendance Management
+             ========================================= -->
+
+        <section class="card dashboard-section">
+
+            <h2>
+                Attendance Management
+            </h2>
+
+            <p class="form-description">
+                Monitor attendance records and view
+                attendance history.
+            </p>
+
+            <div class="dashboard-actions">
+
+                <button
+                    type="button"
+                    class="btn"
+                    onclick="location.href='attendancehistoryadmin.html'"
+                >
+                    Attendance History
+                </button>
+
+
+                <button
+                    type="button"
+                    class="btn"
+                    onclick="location.href='studentattendanceadmin.html'"
+                >
+                    Student Attendance
+                </button>
+
+
+                <button
+                    type="button"
+                    class="btn"
+                    onclick="location.href='teacherattendanceadmin.html'"
+                >
+                    Teacher Attendance
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================================
+             System Management
+             ========================================= -->
+
+        <section class="card dashboard-section">
+
+            <h2>
+                System Management
+            </h2>
+
+            <p class="form-description">
+                Administrator controls for the overall system.
+            </p>
+
+            <div class="dashboard-actions">
+
+                <button
+                    type="button"
+                    class="btn"
+                    onclick="location.href='{% url 'manage_subjects' %}'"
+                >
+                    Manage Subjects
+                </button>
+
+
+                <button
+                    type="button"
+                    class="btn"
+                    onclick="location.href='{% url 'manage_classes' %}'"
+                >
+                    Manage Classes
+                </button>
+
+
+                <button
+                    type="button"
+                    class="btn"
+                    onclick="location.href='adminsystemsettings.html'"
+                >
+                    System Settings
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================================
+             Logout
+             ========================================= -->
+
+        <section class="logout-section">
+
+            <a
+                href="{% url 'admin_logout' %}"
+                class="btn logout-btn"
+            >
+                Logout
+            </a>
+
+        </section>
+
+    </main>
+
+</body>
+
+</html>

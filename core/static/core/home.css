@@ -1,0 +1,448 @@
+/* =========================================
+   HOME PAGE
+   ========================================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                 Roboto, Helvetica, Arial, sans-serif;
+
+    background: #f5f7fa;
+
+    color: #172033;
+
+    min-height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* =========================================
+   HEADER
+   ========================================= */
+
+.home-header {
+    background: #172033;
+
+    color: white;
+
+    padding: 22px 6%;
+}
+
+
+.header-content {
+    max-width: 1200px;
+
+    margin: 0 auto;
+}
+
+
+.brand {
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+}
+
+
+.brand-icon {
+    width: 48px;
+
+    height: 48px;
+
+    border-radius: 10px;
+
+    background: #2f6fed;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    letter-spacing: 0.5px;
+}
+
+
+.brand h1 {
+    font-size: 21px;
+
+    font-weight: 700;
+
+    line-height: 1.2;
+}
+
+
+.brand p {
+    margin-top: 3px;
+
+    color: #b8c1d1;
+
+    font-size: 13px;
+}
+
+
+/* =========================================
+   MAIN
+   ========================================= */
+
+.home-main {
+    flex: 1;
+}
+
+
+/* =========================================
+   HERO
+   ========================================= */
+
+.hero-section {
+    background: #172033;
+
+    color: white;
+
+    padding: 72px 6% 88px;
+}
+
+
+.hero-content {
+    max-width: 850px;
+
+    margin: 0 auto;
+
+    text-align: center;
+}
+
+
+.hero-label {
+    color: #79a7ff;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    letter-spacing: 1.8px;
+
+    margin-bottom: 18px;
+}
+
+
+.hero-content h2 {
+    font-size: clamp(38px, 6vw, 64px);
+
+    line-height: 1.08;
+
+    font-weight: 750;
+
+    letter-spacing: -1.5px;
+}
+
+
+.hero-content h2 span {
+    display: block;
+
+    color: #79a7ff;
+}
+
+
+.hero-description {
+    max-width: 650px;
+
+    margin: 24px auto 0;
+
+    color: #c6cedc;
+
+    font-size: 17px;
+
+    line-height: 1.7;
+}
+
+
+/* =========================================
+   ROLE SECTION
+   ========================================= */
+
+.role-section {
+    max-width: 1200px;
+
+    margin: 0 auto;
+
+    padding: 70px 6% 80px;
+}
+
+
+.section-heading {
+    text-align: center;
+
+    margin-bottom: 38px;
+}
+
+
+.section-heading h2 {
+    font-size: 30px;
+
+    color: #172033;
+
+    margin-bottom: 9px;
+}
+
+
+.section-heading p {
+    color: #687386;
+
+    font-size: 15px;
+}
+
+
+/* =========================================
+   ROLE GRID
+   ========================================= */
+
+.role-grid {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 24px;
+}
+
+
+/* =========================================
+   ROLE CARD
+   ========================================= */
+
+.role-card {
+    background: white;
+
+    border: 1px solid #e1e6ed;
+
+    border-radius: 14px;
+
+    padding: 30px;
+
+    min-height: 300px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+
+.role-card:hover {
+    transform: translateY(-4px);
+
+    border-color: #cbd6e8;
+
+    box-shadow: 0 12px 30px rgba(23, 32, 51, 0.09);
+}
+
+
+/* =========================================
+   ROLE ICON
+   ========================================= */
+
+.role-icon {
+    width: 52px;
+
+    height: 52px;
+
+    border-radius: 12px;
+
+    background: #edf3ff;
+
+    color: #2f6fed;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    margin-bottom: 22px;
+}
+
+
+/* =========================================
+   ROLE CONTENT
+   ========================================= */
+
+.role-content {
+    display: flex;
+
+    flex-direction: column;
+
+    flex: 1;
+}
+
+
+.role-content h3 {
+    font-size: 22px;
+
+    color: #172033;
+
+    margin-bottom: 10px;
+}
+
+
+.role-content p {
+    color: #687386;
+
+    font-size: 14px;
+
+    line-height: 1.65;
+
+    margin-bottom: 26px;
+}
+
+
+/* =========================================
+   ROLE BUTTON
+   ========================================= */
+
+.role-button {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 100%;
+
+    min-height: 46px;
+
+    background: #2f6fed;
+
+    color: white;
+
+    text-decoration: none;
+
+    border-radius: 8px;
+
+    font-size: 14px;
+
+    font-weight: 650;
+
+    margin-top: auto;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.role-button:hover {
+    background: #245bc5;
+
+    transform: translateY(-1px);
+}
+
+
+.role-button:active {
+    transform: translateY(0);
+}
+
+
+/* =========================================
+   FOOTER
+   ========================================= */
+
+.home-footer {
+    background: white;
+
+    border-top: 1px solid #e1e6ed;
+
+    text-align: center;
+
+    padding: 22px 20px;
+}
+
+
+.home-footer p {
+    color: #7a8494;
+
+    font-size: 13px;
+}
+
+
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+
+@media (max-width: 850px) {
+
+    .role-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .role-card {
+        min-height: auto;
+    }
+
+    .hero-section {
+        padding: 58px 6% 68px;
+    }
+
+    .role-section {
+        padding-top: 55px;
+    }
+
+}
+
+
+@media (max-width: 500px) {
+
+    .home-header {
+        padding: 18px 5%;
+    }
+
+    .brand h1 {
+        font-size: 18px;
+    }
+
+    .brand p {
+        font-size: 12px;
+    }
+
+    .brand-icon {
+        width: 42px;
+        height: 42px;
+    }
+
+    .hero-content h2 {
+        font-size: 38px;
+    }
+
+    .hero-description {
+        font-size: 15px;
+    }
+
+    .role-section {
+        padding-left: 5%;
+        padding-right: 5%;
+    }
+
+    .role-card {
+        padding: 25px;
+    }
+
+}

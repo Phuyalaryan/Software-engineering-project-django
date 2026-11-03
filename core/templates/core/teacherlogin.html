@@ -1,0 +1,454 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Login | Smart Attendance</title>
+
+    <link rel="stylesheet" href="{% static 'core/studentlogin.css' %}">
+
+    <style>
+        .face-camera {
+            display: none;
+            width: 100%;
+            max-height: 360px;
+            aspect-ratio: 4 / 3;
+            object-fit: cover;
+            margin-top: 12px;
+            border-radius: 12px;
+            background: #111827;
+        }
+
+        .face-camera-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 12px 0;
+        }
+
+        .face-camera-actions button {
+            flex: 1 1 140px;
+        }
+
+        .face-status {
+            min-height: 24px;
+            line-height: 1.5;
+        }
+
+        .face-help {
+            color: #64748b;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 480px) {
+            .face-camera-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Smart Attendance Management System</h1>
+        <p>Teacher Portal</p>
+    </header>
+
+    <main class="container">
+        <div class="card login-card">
+            <h2>Teacher Login</h2>
+
+            <p class="form-description">
+                Enter your Teacher ID and password first. Face verification
+                becomes available only after your credentials are confirmed.
+            </p>
+
+            <form
+                method="POST"
+                action="{% url 'teacher_login' %}"
+                id="teacherLoginForm"
+            >
+                {% csrf_token %}
+
+                <label for="teacherUsername">Teacher ID</label>
+                <input
+                    type="text"
+                    id="teacherUsername"
+                    name="teacherUsername"
+                    placeholder="Enter your Teacher ID"
+                    autocomplete="username"
+                    required
+                >
+
+                <label for="teacherPassword">Password</label>
+                <input
+                    type="password"
+                    id="teacherPassword"
+                    name="teacherPassword"
+                    placeholder="Enter your password"
+                    autocomplete="current-password"
+                    required
+                >
+
+                <button
+                    type="button"
+                    id="verifyCredentialsButton"
+                    class="btn"
+                >
+                    Verify Teacher ID and Password
+                </button>
+
+                <p
+                    id="credentialStatus"
+                    class="face-status"
+                    role="status"
+                    aria-live="polite"
+                ></p>
+
+                <section id="faceVerificationSection" hidden>
+                    <label for="faceCamera">Face Verification</label>
+
+                    <video
+                        id="faceCamera"
+                        class="face-camera"
+                        autoplay
+                        muted
+                        playsinline
+                        aria-label="Live camera preview"
+                    ></video>
+
+                    <img
+                        id="facePreview"
+                        class="face-camera"
+                        alt="Captured face preview"
+                    >
+
+                    <canvas id="faceCanvas" hidden></canvas>
+
+                    <input
+                        type="hidden"
+                        id="imageData"
+                        name="image_data"
+                    >
+
+                    <div class="face-camera-actions">
+                        <button
+                            type="button"
+                            id="startCameraButton"
+                            class="btn"
+                        >
+                            Start Camera
+                        </button>
+
+                        <button
+                            type="button"
+                            id="captureButton"
+                            class="btn"
+                            disabled
+                        >
+                            Capture Face
+                        </button>
+
+                        <button
+                            type="button"
+                            id="retakeButton"
+                            class="btn"
+                            hidden
+                        >
+                            Retake
+                        </button>
+                    </div>
+
+                    <p
+                        id="faceStatus"
+                        class="face-status"
+                        role="status"
+                        aria-live="polite"
+                    >
+                        Start the camera, center your face, and capture it before logging in.
+                    </p>
+
+                    <p class="face-help">
+                        Use a well-lit area and make sure only your face is visible.
+                    </p>
+                </section>
+
+                {% if error %}
+                    <p class="error-message" role="alert">
+                        {{ error }}
+                    </p>
+                {% endif %}
+
+                <button
+                    type="submit"
+                    id="loginButton"
+                    class="btn"
+                    disabled
+                >
+                    Verify Face and Login
+                </button>
+            </form>
+
+            <div class="login-divider">
+                <span>OR</span>
+            </div>
+
+            <p class="register-text">
+                Don't have a teacher account?
+            </p>
+
+            <a href="{% url 'teacher_register' %}" class="btn">
+                Register as Teacher
+            </a>
+
+            <p class="register-text">
+                Already registered?
+            </p>
+
+            <a href="{% url 'teacher_registration_status' %}" class="btn">
+                Check Registration Status
+            </a>
+
+            <br><br>
+
+            <a href="{% url 'home' %}" class="back-link">
+                ← Back to Home
+            </a>
+        </div>
+    </main>
+
+    <script>
+        const video = document.getElementById("faceCamera");
+        const preview = document.getElementById("facePreview");
+        const canvas = document.getElementById("faceCanvas");
+        const imageDataInput = document.getElementById("imageData");
+        const statusMessage = document.getElementById("faceStatus");
+        const credentialStatus = document.getElementById("credentialStatus");
+        const faceVerificationSection =
+            document.getElementById("faceVerificationSection");
+
+        const teacherIdInput = document.getElementById("teacherUsername");
+        const passwordInput = document.getElementById("teacherPassword");
+        const verifyCredentialsButton =
+            document.getElementById("verifyCredentialsButton");
+
+        const startCameraButton = document.getElementById("startCameraButton");
+        const captureButton = document.getElementById("captureButton");
+        const retakeButton = document.getElementById("retakeButton");
+        const loginButton = document.getElementById("loginButton");
+        const loginForm = document.getElementById("teacherLoginForm");
+
+        let cameraStream = null;
+        let credentialsVerified = false;
+
+        function stopCamera() {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+                cameraStream = null;
+            }
+
+            video.srcObject = null;
+        }
+
+        function resetFaceVerification(message = "") {
+            credentialsVerified = false;
+            faceVerificationSection.hidden = true;
+            imageDataInput.value = "";
+            preview.removeAttribute("src");
+            preview.style.display = "none";
+            video.style.display = "none";
+            captureButton.disabled = true;
+            startCameraButton.disabled = false;
+            retakeButton.hidden = true;
+            loginButton.disabled = true;
+            stopCamera();
+            statusMessage.textContent = message;
+        }
+
+        async function startCamera() {
+            statusMessage.textContent = "";
+
+            if (!navigator.mediaDevices ||
+                !navigator.mediaDevices.getUserMedia) {
+                statusMessage.textContent =
+                    "Camera access is unavailable. Open this site using localhost.";
+                return;
+            }
+
+            try {
+                cameraStream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: "user",
+                        width: { ideal: 640 },
+                        height: { ideal: 480 }
+                    },
+                    audio: false
+                });
+
+                video.srcObject = cameraStream;
+                await video.play();
+
+                video.style.display = "block";
+                preview.style.display = "none";
+                startCameraButton.disabled = true;
+                captureButton.disabled = false;
+
+                statusMessage.textContent =
+                    "Camera ready. Center your face and select Capture Face.";
+            } catch (error) {
+                stopCamera();
+                statusMessage.textContent =
+                    "Could not open the camera. Check your browser camera permission.";
+            }
+        }
+
+        async function verifyCredentials() {
+            credentialStatus.textContent = "";
+            resetFaceVerification();
+
+            const teacherId = teacherIdInput.value.trim();
+            const password = passwordInput.value;
+
+            if (!teacherId || !password) {
+                credentialStatus.textContent =
+                    "Enter your Teacher ID and password first.";
+                return;
+            }
+
+            verifyCredentialsButton.disabled = true;
+            verifyCredentialsButton.textContent = "Checking...";
+
+            try {
+                const formData = new FormData(loginForm);
+                formData.set("action", "check_credentials");
+
+                const response = await fetch(loginForm.action, {
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+                });
+
+                const result = await response.json();
+
+                if (!response.ok || !result.ok) {
+                    credentialStatus.textContent =
+                        result.message ||
+                        "Teacher ID or password is incorrect.";
+                    return;
+                }
+
+                credentialsVerified = true;
+                faceVerificationSection.hidden = false;
+                credentialStatus.textContent =
+                    result.message ||
+                    "Password verified. Starting the camera...";
+
+                // Start the camera automatically after valid credentials.
+                await startCamera();
+            } catch (error) {
+                credentialStatus.textContent =
+                    "Could not verify credentials. Check your connection and try again.";
+            } finally {
+                verifyCredentialsButton.disabled = false;
+                verifyCredentialsButton.textContent =
+                    "Verify Teacher ID and Password";
+            }
+        }
+
+        verifyCredentialsButton.addEventListener(
+            "click",
+            verifyCredentials
+        );
+
+        teacherIdInput.addEventListener("input", function () {
+            if (credentialsVerified) {
+                resetFaceVerification(
+                    "Verify your Teacher ID and password again."
+                );
+            }
+        });
+
+        passwordInput.addEventListener("input", function () {
+            if (credentialsVerified) {
+                resetFaceVerification(
+                    "Verify your Teacher ID and password again."
+                );
+            }
+        });
+
+        startCameraButton.addEventListener("click", startCamera);
+
+        captureButton.addEventListener("click", function () {
+            if (!cameraStream || !video.videoWidth) {
+                statusMessage.textContent =
+                    "Start the camera and wait for the preview before capturing.";
+                return;
+            }
+
+            const maxWidth = 800;
+            const scale = Math.min(1, maxWidth / video.videoWidth);
+
+            canvas.width = Math.round(video.videoWidth * scale);
+            canvas.height = Math.round(video.videoHeight * scale);
+
+            const context = canvas.getContext("2d");
+            context.drawImage(
+                video,
+                0,
+                0,
+                canvas.width,
+                canvas.height
+            );
+
+            imageDataInput.value = canvas.toDataURL("image/jpeg", 0.85);
+            preview.src = imageDataInput.value;
+
+            video.style.display = "none";
+            preview.style.display = "block";
+            stopCamera();
+
+            captureButton.disabled = true;
+            retakeButton.hidden = false;
+            loginButton.disabled = false;
+
+            statusMessage.textContent =
+                "Face captured. Review it, then select Verify Face and Login.";
+        });
+
+        retakeButton.addEventListener("click", function () {
+            imageDataInput.value = "";
+            preview.removeAttribute("src");
+            preview.style.display = "none";
+
+            retakeButton.hidden = true;
+            captureButton.disabled = true;
+            startCameraButton.disabled = false;
+            loginButton.disabled = true;
+
+            statusMessage.textContent =
+                "Start the camera to capture your face again.";
+        });
+
+        loginForm.addEventListener("submit", function (event) {
+            if (!credentialsVerified) {
+                event.preventDefault();
+                credentialStatus.textContent =
+                    "Verify your Teacher ID and password before face verification.";
+                return;
+            }
+
+            if (!imageDataInput.value) {
+                event.preventDefault();
+                statusMessage.textContent =
+                    "Capture your face before attempting to log in.";
+            }
+        });
+
+        window.addEventListener("pagehide", stopCamera);
+    </script>
+</body>
+</html>

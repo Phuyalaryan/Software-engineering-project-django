@@ -1,0 +1,302 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Registration Status</title>
+
+    <link
+        rel="stylesheet"
+        href="{% static 'core/studentregistrationstatus.css' %}"
+    >
+
+</head>
+
+
+<body>
+
+    <header>
+
+        <h1>
+            Smart Attendance Management System
+        </h1>
+
+        <p>
+            Student Registration Status
+        </p>
+
+    </header>
+
+
+    <main class="container">
+
+        <div class="registration-card">
+
+            <h2>
+                Registration Status
+            </h2>
+
+            <p class="form-description">
+                Enter the email address you used during registration
+                to check your registration status.
+            </p>
+
+
+            <!-- =========================================
+                 CHECK REGISTRATION STATUS
+                 ========================================= -->
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+                <label for="email">
+                    Email Address
+                </label>
+
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="Enter your registered email"
+                    required
+                >
+
+                <button type="submit" class="btn">
+                    Check Status
+                </button>
+
+            </form>
+
+
+            <!-- =========================================
+                 ERROR
+                 ========================================= -->
+
+            {% if error %}
+
+                <div class="error-message">
+                    {{ error }}
+                </div>
+
+            {% endif %}
+
+
+            <!-- =========================================
+                 REGISTRATION DETAILS
+                 ========================================= -->
+
+            {% if checked and student %}
+
+                <hr>
+
+                <h3>
+                    Registration Details
+                </h3>
+
+
+                <div class="registration-details">
+
+
+                    <!-- Name -->
+
+                    <div class="detail-row">
+
+                        <span class="detail-label">
+                            Name
+                        </span>
+
+                        <span class="detail-value">
+                            {{ student.user.first_name }}
+                            {{ student.user.last_name }}
+                        </span>
+
+                    </div>
+
+
+                    <!-- Email -->
+
+                    <div class="detail-row">
+
+                        <span class="detail-label">
+                            Email
+                        </span>
+
+                        <span class="detail-value">
+                            {{ student.user.email }}
+                        </span>
+
+                    </div>
+
+
+                    <!-- Program -->
+
+                    <div class="detail-row">
+
+                        <span class="detail-label">
+                            Program
+                        </span>
+
+                        <span class="detail-value">
+                            {{ student.program }}
+                        </span>
+
+                    </div>
+
+
+                    <!-- Semester -->
+
+                    <div class="detail-row">
+
+                        <span class="detail-label">
+                            Semester
+                        </span>
+
+                        <span class="detail-value">
+                            {{ student.semester }}
+                        </span>
+
+                    </div>
+
+
+                    <!-- Status -->
+
+                    <div class="detail-row">
+
+                        <span class="detail-label">
+                            Registration Status
+                        </span>
+
+                        <span class="status status-{{ student.status|lower }}">
+                            {{ student.status }}
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- =====================================
+                     APPROVED
+                     ===================================== -->
+
+                {% if student.status == 'Approved' %}
+
+                    <div class="success-message">
+
+                        <strong>
+                            Registration Approved
+                        </strong>
+
+                        <p>
+                            Your registration has been approved.
+                            You can now log in using your Student ID.
+                        </p>
+
+                        <p>
+                            Student ID:
+                            <strong>
+                                {{ student.student_id }}
+                            </strong>
+                        </p>
+
+                    </div>
+
+
+                    <a
+                        href="/student-login/"
+                        class="btn"
+                    >
+                        Student Login
+                    </a>
+
+
+                <!-- =====================================
+                     PENDING
+                     ===================================== -->
+
+                {% elif student.status == 'Pending' %}
+
+                    <div class="pending-message">
+
+                        <strong>
+                            Registration Pending
+                        </strong>
+
+                        <p>
+                            Your registration is currently under review.
+                            Please wait for an administrator to verify
+                            your information.
+                        </p>
+
+                    </div>
+
+
+                <!-- =====================================
+                     REJECTED
+                     ===================================== -->
+
+                {% elif student.status == 'Rejected' %}
+
+                    <div class="error-message">
+
+                        <strong>
+                            Registration Rejected
+                        </strong>
+
+                        <p>
+                            Your registration has been rejected.
+                            Please contact the administrator for
+                            more information.
+                        </p>
+
+                    </div>
+
+                {% endif %}
+
+            {% endif %}
+
+
+            <hr>
+
+
+            <!-- =========================================
+                 NAVIGATION
+                 ========================================= -->
+
+            <p class="register-text">
+
+                Need to register?
+
+                <a href="/student-register/">
+                    Student Registration
+                </a>
+
+            </p>
+
+
+            <a
+                href="/"
+                class="back-link"
+            >
+                ← Back to Home
+            </a>
+
+
+        </div>
+
+    </main>
+
+</body>
+
+</html>

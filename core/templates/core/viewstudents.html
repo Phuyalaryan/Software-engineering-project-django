@@ -1,0 +1,412 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Students | Smart Attendance</title>
+
+    <style>
+        :root {
+            --ink: #172033;
+            --muted: #687386;
+            --line: #e5eaf1;
+            --page: #f5f7fb;
+            --surface: #ffffff;
+            --blue: #3659d9;
+            --blue-light: #edf1ff;
+            --green: #188653;
+            --green-light: #e8f7ef;
+            --amber: #9a6500;
+            --amber-light: #fff4d8;
+            --red: #b42318;
+            --red-light: #fff0ee;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            padding: 32px 20px 48px;
+            color: var(--ink);
+            background: var(--page);
+            font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI",
+                sans-serif;
+        }
+
+        .page {
+            width: min(100%, 1440px);
+            margin: 0 auto;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 22px;
+        }
+
+        .eyebrow {
+            margin: 0 0 8px;
+            color: var(--blue);
+            font-size: 11px;
+            font-weight: 750;
+            letter-spacing: .13em;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(26px, 4vw, 34px);
+            font-weight: 760;
+            letter-spacing: -.04em;
+        }
+
+        .subtitle {
+            margin: 8px 0 0;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .table-card {
+            overflow: hidden;
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            background: var(--surface);
+            box-shadow: 0 14px 38px rgba(28, 42, 74, .06);
+        }
+
+        .table-topline {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            padding: 17px 20px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .table-topline strong {
+            font-size: 14px;
+        }
+
+        .student-count {
+            padding: 5px 9px;
+            border-radius: 999px;
+            color: var(--blue);
+            background: var(--blue-light);
+            font-size: 11px;
+            font-weight: 750;
+        }
+
+        .table-scroll {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            min-width: 1120px;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            padding: 12px 14px;
+            color: #687386;
+            background: #fafbfe;
+            font-size: 10px;
+            font-weight: 750;
+            letter-spacing: .07em;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 13px 14px;
+            border-top: 1px solid #edf0f5;
+            font-size: 12px;
+            vertical-align: middle;
+        }
+
+        tbody tr:hover {
+            background: #fbfcff;
+        }
+
+        .face-cell {
+            width: 72px;
+        }
+
+        .face-thumb,
+        .face-placeholder {
+            display: grid;
+            width: 46px;
+            height: 46px;
+            place-items: center;
+            overflow: hidden;
+            border: 1px solid var(--line);
+            border-radius: 13px;
+            background: #f0f3fa;
+        }
+
+        .face-thumb {
+            object-fit: cover;
+        }
+
+        .face-placeholder {
+            color: #8b96a8;
+            font-size: 18px;
+        }
+
+        .student-name {
+            font-weight: 700;
+        }
+
+        .muted {
+            color: var(--muted);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 9px;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 750;
+            white-space: nowrap;
+        }
+
+        .badge::before {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+            content: "";
+        }
+
+        .face-yes,
+        .status-approved {
+            color: var(--green);
+            background: var(--green-light);
+        }
+
+        .face-no,
+        .status-pending {
+            color: var(--amber);
+            background: var(--amber-light);
+        }
+
+        .status-rejected {
+            color: var(--red);
+            background: var(--red-light);
+        }
+
+        .actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .button {
+            display: inline-flex;
+            min-height: 34px;
+            align-items: center;
+            justify-content: center;
+            padding: 0 10px;
+            border: 1px solid var(--line);
+            border-radius: 9px;
+            background: white;
+            color: var(--ink);
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .button:hover {
+            background: #f7f9fc;
+        }
+
+        .button-review {
+            border-color: #dce4ff;
+            color: var(--blue);
+            background: #f7f8ff;
+        }
+
+        .button-delete {
+            border-color: #f2d1ce;
+            color: var(--red);
+            background: #fffafa;
+        }
+
+        .button-delete:hover {
+            background: var(--red-light);
+        }
+
+        .delete-form {
+            display: inline;
+            margin: 0;
+        }
+
+        .empty {
+            padding: 44px 20px;
+            color: var(--muted);
+            text-align: center;
+        }
+
+        .back-row {
+            margin-top: 18px;
+        }
+
+        @media (max-width: 650px) {
+            body {
+                padding: 22px 12px 36px;
+            }
+
+            .page-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .table-topline {
+                padding: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="page">
+        <header class="page-header">
+            <div>
+                <p class="eyebrow">Administration</p>
+                <h1>Students</h1>
+                <p class="subtitle">
+                    Review student information, face registration, and accounts.
+                </p>
+            </div>
+        </header>
+
+        <section class="table-card" aria-label="Student list">
+            <div class="table-topline">
+                <strong>Registered students</strong>
+                <span class="student-count">{{ students|length }} students</span>
+            </div>
+
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Face</th>
+                            <th>Student ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Program</th>
+                            <th>Semester</th>
+                            <th>Face registration</th>
+                            <th>Status</th>
+                            <th>Registered</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for student in students %}
+                            <tr>
+                                <td class="face-cell">
+                                    {% if student.face_image %}
+                                        <img
+                                            class="face-thumb"
+                                            src="{% url 'admin_student_face_image' student.id %}"
+                                            alt="Face photo of {{ student.user.get_full_name }}"
+                                            loading="lazy"
+                                        >
+                                    {% else %}
+                                        <span
+                                            class="face-placeholder"
+                                            title="No face photo saved"
+                                            aria-label="No face photo saved"
+                                        >—</span>
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {{ student.student_id|default:"Not assigned" }}
+                                </td>
+
+                                <td class="student-name">
+                                    {{ student.user.get_full_name|default:student.user.username }}
+                                </td>
+
+                                <td>{{ student.user.email }}</td>
+                                <td>{{ student.phone }}</td>
+                                <td>{{ student.program.name }}</td>
+                                <td>{{ student.semester }}</td>
+
+                                <td>
+                                    {% if student.face_registered and student.face_encoding %}
+                                        <span class="badge face-yes">Registered</span>
+                                    {% else %}
+                                        <span class="badge face-no">Not registered</span>
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    <span class="badge status-{{ student.status|lower }}">
+                                        {{ student.status }}
+                                    </span>
+                                </td>
+
+                                <td>{{ student.created_at|date:"M d, Y" }}</td>
+
+                                <td>
+                                    <div class="actions">
+                                        <a
+                                            class="button button-review"
+                                            href="{% url 'review_student' student.id %}"
+                                        >
+                                            Review
+                                        </a>
+
+                                        <form
+                                            class="delete-form"
+                                            method="POST"
+                                            action="{% url 'delete_student' student.id %}"
+                                            onsubmit="return confirm('Permanently remove this student, their account, and face photo? Related records may also be deleted.');"
+                                        >
+                                            {% csrf_token %}
+                                            <button
+                                                type="submit"
+                                                class="button button-delete"
+                                            >
+                                                Remove
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="11" class="empty">
+                                    No students found.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <div class="back-row">
+            <a href="{% url 'admin_dashboard' %}" class="button">
+                ← Back to dashboard
+            </a>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,1031 @@
+/* =========================================================
+   SMART ATTENDANCE — STUDENT REGISTRATION
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap');
+
+
+/* =========================================================
+   VARIABLES
+   ========================================================= */
+
+:root {
+    --navy: #16233d;
+    --navy-light: #1e3260;
+
+    --page-bg: #eef1f7;
+    --white: #ffffff;
+
+    --border: #e1e6ef;
+    --border-dark: #cbd3e0;
+
+    --text: #1b2436;
+    --muted: #687386;
+    --placeholder: #9aa3b2;
+
+    --primary: #2455a4;
+    --primary-dark: #1b4382;
+    --primary-light: #edf3fc;
+
+    --warning: #a9762c;
+    --warning-bg: #fbf4e6;
+    --warning-border: #ead7b1;
+
+    --error: #b3261e;
+    --error-bg: #fceeed;
+    --error-border: #efc8c5;
+
+    --success: #1f7a54;
+    --success-bg: #eaf6ef;
+    --success-border: #c6e5d3;
+
+    --radius: 10px;
+
+    --shadow:
+        0 2px 6px rgba(22, 35, 61, 0.04),
+        0 18px 45px rgba(22, 35, 61, 0.08);
+
+    --font-body:
+        "Inter",
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+
+    --font-heading:
+        "Source Serif 4",
+        Georgia,
+        serif;
+}
+
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+
+    background: var(--page-bg);
+    color: var(--text);
+
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.5;
+
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+a {
+    color: inherit;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.site-header {
+    position: relative;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--navy) 0%,
+            var(--navy-light) 100%
+        );
+
+    color: var(--white);
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.header-inner {
+    width: min(1040px, calc(100% - 48px));
+    min-height: 78px;
+
+    margin: 0 auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 30px;
+}
+
+
+/* Brand */
+
+.brand {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    color: var(--white);
+    text-decoration: none;
+}
+
+.brand-mark {
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+
+    background: rgba(255, 255, 255, 0.08);
+
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+}
+
+.brand-text {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.brand-text strong {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+}
+
+.brand-text span {
+    color: rgba(255, 255, 255, 0.62);
+
+    font-size: 11px;
+    font-weight: 400;
+}
+
+
+/* Portal */
+
+.portal-label {
+    color: rgba(255, 255, 255, 0.72);
+
+    font-size: 13px;
+    font-weight: 500;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   PAGE
+   ========================================================= */
+
+.page-wrapper {
+    width: min(900px, calc(100% - 40px));
+
+    margin: 0 auto;
+
+    padding: 46px 0 70px;
+}
+
+
+/* =========================================================
+   REGISTRATION CARD
+   ========================================================= */
+
+.registration-card {
+    position: relative;
+
+    background: var(--white);
+
+    border: 1px solid var(--border);
+    border-radius: 12px;
+
+    box-shadow: var(--shadow);
+
+    padding: 46px 52px 40px;
+
+    overflow: hidden;
+}
+
+.registration-card::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    right: 0;
+
+    height: 4px;
+
+    background: var(--primary);
+}
+
+
+/* =========================================================
+   PAGE HEADING
+   ========================================================= */
+
+.page-heading {
+    margin-bottom: 30px;
+}
+
+.eyebrow {
+    display: block;
+
+    margin-bottom: 10px;
+
+    color: var(--primary);
+
+    font-size: 11px;
+    font-weight: 700;
+
+    letter-spacing: 0.12em;
+}
+
+.page-heading h1 {
+    margin: 0 0 9px;
+
+    color: var(--navy);
+
+    font-family: var(--font-heading);
+    font-size: 32px;
+    font-weight: 600;
+
+    line-height: 1.2;
+}
+
+.page-heading p {
+    max-width: 620px;
+
+    margin: 0;
+
+    color: var(--muted);
+
+    font-size: 14px;
+    line-height: 1.65;
+}
+
+
+/* =========================================================
+   FORM SECTION
+   ========================================================= */
+
+.form-section {
+    margin: 0;
+    padding: 0;
+}
+
+.form-section + .form-section {
+    margin-top: 36px;
+    padding-top: 34px;
+
+    border-top: 1px solid var(--border);
+}
+
+
+/* Section Heading */
+
+.section-heading {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 12px;
+
+    margin-bottom: 20px;
+}
+
+.section-number {
+    flex: 0 0 auto;
+
+    width: 32px;
+    height: 32px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-top: 1px;
+
+    border-radius: 7px;
+
+    background: var(--primary-light);
+    color: var(--primary);
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.section-heading h2 {
+    margin: 0 0 2px;
+
+    color: var(--navy);
+
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.section-heading p {
+    margin: 0;
+
+    color: var(--muted);
+
+    font-size: 12.5px;
+}
+
+
+/* =========================================================
+   FORM GRID
+   ========================================================= */
+
+.form-grid {
+    display: grid;
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 20px 18px;
+}
+
+
+/* =========================================================
+   FORM GROUP
+   ========================================================= */
+
+.form-group {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: var(--navy);
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.form-group label span {
+    color: var(--error);
+
+    margin-left: 2px;
+}
+
+
+/* =========================================================
+   INPUTS
+   ========================================================= */
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+
+    min-height: 44px;
+
+    padding: 10px 13px;
+
+    border: 1px solid var(--border-dark);
+    border-radius: 7px;
+
+    background: var(--white);
+    color: var(--text);
+
+    outline: none;
+
+    font-size: 13.5px;
+
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease,
+        background 0.15s ease;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: var(--placeholder);
+}
+
+.form-group input:hover,
+.form-group select:hover,
+.form-group textarea:hover {
+    border-color: #aeb8c8;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: var(--primary);
+
+    box-shadow:
+        0 0 0 3px rgba(36, 85, 164, 0.10);
+}
+
+.form-group textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+
+/* =========================================================
+   SELECT
+   ========================================================= */
+
+.form-group select {
+    cursor: pointer;
+
+    appearance: none;
+
+    padding-right: 38px;
+
+    background-color: var(--white);
+
+    background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23687386' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+
+    background-repeat: no-repeat;
+
+    background-position:
+        right 12px center;
+
+    background-size: 15px;
+}
+
+
+/* =========================================================
+   FIELD HINT
+   ========================================================= */
+
+.field-hint {
+    display: block;
+
+    margin: 5px 0 0;
+
+    color: var(--muted);
+
+    font-size: 11.5px;
+    line-height: 1.45;
+}
+
+
+/* =========================================================
+   PASSWORD
+   ========================================================= */
+
+.password-field {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+}
+
+.password-field input {
+    padding-right: 48px;
+}
+
+.password-toggle {
+    position: absolute;
+
+    top: 50%;
+    right: 7px;
+
+    width: 34px;
+    height: 34px;
+
+    transform: translateY(-50%);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: 0;
+    border-radius: 6px;
+
+    background: transparent;
+    color: var(--muted);
+
+    cursor: pointer;
+
+    transition:
+        background 0.15s ease,
+        color 0.15s ease;
+}
+
+.password-toggle:hover {
+    background: var(--primary-light);
+    color: var(--primary);
+}
+
+.password-toggle:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 1px;
+}
+
+.eye-icon {
+    width: 18px;
+    height: 18px;
+
+    display: block;
+}
+
+
+/* =========================================================
+   ERROR MESSAGES
+   ========================================================= */
+
+.error-message {
+    display: block;
+
+    margin-top: 5px;
+
+    color: var(--error);
+
+    font-size: 11.5px;
+    font-weight: 500;
+
+    line-height: 1.4;
+}
+
+.error-message:empty {
+    display: none;
+}
+
+.form-group input:has(+ .error-message:not(:empty)),
+.form-group select:has(+ .error-message:not(:empty)) {
+    border-color: var(--error);
+}
+
+
+/* =========================================================
+   BACKEND ERROR
+   ========================================================= */
+
+.backend-error {
+    margin-bottom: 24px;
+
+    padding: 12px 14px;
+
+    background: var(--error-bg);
+
+    border: 1px solid var(--error-border);
+    border-radius: 7px;
+
+    color: var(--error);
+
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   SUCCESS
+   ========================================================= */
+
+.success-message {
+    margin-bottom: 24px;
+
+    padding: 13px 15px;
+
+    background: var(--success-bg);
+
+    border: 1px solid var(--success-border);
+    border-radius: 7px;
+
+    color: var(--success);
+
+    font-size: 13px;
+    font-weight: 500;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   SUBMIT BUTTON
+   ========================================================= */
+
+.submit-button {
+    width: 100%;
+
+    min-height: 46px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-top: 30px;
+    padding: 11px 18px;
+
+    border: 0;
+    border-radius: 7px;
+
+    background: var(--primary);
+    color: var(--white);
+
+    cursor: pointer;
+
+    font-size: 13.5px;
+    font-weight: 600;
+
+    transition:
+        background 0.15s ease,
+        transform 0.1s ease,
+        box-shadow 0.15s ease;
+}
+
+.submit-button:hover {
+    background: var(--primary-dark);
+
+    box-shadow:
+        0 5px 14px rgba(36, 85, 164, 0.18);
+}
+
+.submit-button:active {
+    transform: translateY(1px);
+}
+
+
+/* =========================================================
+   APPROVAL NOTICE
+   ========================================================= */
+
+.approval-notice {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 13px;
+
+    margin-top: 22px;
+    margin-bottom: 24px;
+
+    padding: 15px 17px;
+
+    background: var(--warning-bg);
+
+    border: 1px solid var(--warning-border);
+    border-radius: var(--radius);
+}
+
+.notice-icon {
+    flex: 0 0 auto;
+
+    width: 22px;
+    height: 22px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-top: 1px;
+
+    border-radius: 50%;
+
+    background: var(--warning);
+    color: var(--white);
+
+    font-family: Georgia, serif;
+    font-size: 13px;
+    font-weight: 700;
+    font-style: italic;
+}
+
+.notice-content {
+    min-width: 0;
+}
+
+.approval-notice strong {
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: #76531f;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.approval-notice p {
+    margin: 0;
+
+    color: #866c42;
+
+    font-size: 12.5px;
+    line-height: 1.55;
+}
+
+
+/* =========================================================
+   BOTTOM NAVIGATION BUTTONS
+   ========================================================= */
+
+.bottom-links {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+
+    gap: 10px;
+
+    margin-top: 20px;
+}
+
+.secondary-button {
+    width: 100%;
+    min-height: 43px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 10px 16px;
+
+    border: 1px solid var(--border-dark);
+    border-radius: 7px;
+
+    background: var(--white);
+    color: var(--primary);
+
+    text-decoration: none;
+
+    font-size: 12.5px;
+    font-weight: 600;
+
+    transition:
+        background 0.15s ease,
+        border-color 0.15s ease,
+        color 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+.secondary-button:hover {
+    background: var(--primary-light);
+
+    border-color: #aebed8;
+
+    color: var(--primary-dark);
+
+    box-shadow:
+        0 3px 8px rgba(22, 35, 61, 0.05);
+}
+
+.secondary-button:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+
+/* =========================================================
+   EXISTING ACCOUNT
+   ========================================================= */
+
+.bottom-info {
+    margin-top: 22px;
+    padding-top: 22px;
+
+    border-top: 1px solid var(--border);
+
+    text-align: center;
+}
+
+.bottom-info p {
+    margin: 0;
+
+    color: var(--muted);
+
+    font-size: 13px;
+}
+
+.bottom-info p a {
+    color: var(--primary);
+
+    font-weight: 600;
+
+    text-decoration: none;
+}
+
+.bottom-info p a:hover {
+    text-decoration: underline;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.site-footer {
+    padding: 0 20px 30px;
+
+    color: #8a94a5;
+
+    text-align: center;
+
+    font-size: 11.5px;
+}
+
+
+/* =========================================================
+   FOCUS
+   ========================================================= */
+
+:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+
+/* =========================================================
+   RESPONSIVE — TABLET
+   ========================================================= */
+
+@media (max-width: 760px) {
+
+    .header-inner {
+        width: min(100% - 32px, 900px);
+
+        min-height: 70px;
+    }
+
+    .page-wrapper {
+        width: min(100% - 28px, 700px);
+
+        padding-top: 32px;
+    }
+
+    .registration-card {
+        padding: 38px 32px 32px;
+    }
+
+    .page-heading h1 {
+        font-size: 29px;
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE — MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .header-inner {
+        width: calc(100% - 28px);
+
+        min-height: 64px;
+    }
+
+    .brand-mark {
+        width: 35px;
+        height: 35px;
+
+        font-size: 11px;
+    }
+
+    .brand-text strong {
+        font-size: 12.5px;
+    }
+
+    .brand-text span {
+        font-size: 10px;
+    }
+
+    .portal-label {
+        display: none;
+    }
+
+
+    .page-wrapper {
+        width: calc(100% - 20px);
+
+        padding: 20px 0 45px;
+    }
+
+
+    .registration-card {
+        padding: 32px 22px 28px;
+
+        border-radius: 10px;
+    }
+
+
+    .page-heading {
+        margin-bottom: 24px;
+    }
+
+    .eyebrow {
+        font-size: 10px;
+    }
+
+    .page-heading h1 {
+        font-size: 27px;
+    }
+
+    .page-heading p {
+        font-size: 13px;
+    }
+
+
+    .approval-notice {
+        margin-top: 18px;
+        margin-bottom: 20px;
+
+        padding: 13px 14px;
+    }
+
+
+    .form-grid {
+        grid-template-columns: 1fr;
+
+        gap: 18px;
+    }
+
+
+    .form-section + .form-section {
+        margin-top: 30px;
+        padding-top: 28px;
+    }
+
+
+    .section-heading {
+        margin-bottom: 17px;
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE — SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 400px) {
+
+    .registration-card {
+        padding: 28px 17px 24px;
+    }
+
+    .page-heading h1 {
+        font-size: 24px;
+    }
+
+    .section-heading h2 {
+        font-size: 15px;
+    }
+
+    .form-group input,
+    .form-group select {
+        min-height: 42px;
+
+        font-size: 13px;
+    }
+
+    .secondary-button {
+        min-height: 42px;
+
+        font-size: 12px;
+    }
+
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+
+        transition-duration: 0.001ms !important;
+        animation-duration: 0.001ms !important;
+    }
+
+}

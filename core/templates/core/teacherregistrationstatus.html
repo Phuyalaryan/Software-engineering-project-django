@@ -1,0 +1,152 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Registration Status | Smart Attendance</title>
+
+    <link
+        rel="stylesheet"
+        href="{% static 'core/teacherregistrationstatus.css' %}"
+    >
+</head>
+
+<body>
+    <header>
+        <h1>Smart Attendance Management System</h1>
+        <p>Teacher Registration Status</p>
+    </header>
+
+    <main class="container">
+        <div class="registration-card">
+            <h2>Registration Status</h2>
+
+            <p class="form-description">
+                Enter the email address you used during teacher registration
+                to check your registration status.
+            </p>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <label for="email">Email Address</label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value="{{ request.POST.email|default:'' }}"
+                    placeholder="Enter your registered email"
+                    autocomplete="email"
+                    required
+                >
+
+                <button type="submit" class="btn">
+                    Check Status
+                </button>
+            </form>
+
+            {% if error %}
+                <div class="error-message" role="alert">
+                    {{ error }}
+                </div>
+            {% endif %}
+
+            {% if teacher %}
+                <hr>
+
+                <h3>Registration Details</h3>
+
+                <div class="registration-details">
+                    <div class="detail-row">
+                        <span class="detail-label">Name</span>
+                        <span class="detail-value">
+                            {{ teacher.user.first_name }}
+                            {{ teacher.user.last_name }}
+                        </span>
+                    </div>
+
+                    <div class="detail-row">
+                        <span class="detail-label">Email</span>
+                        <span class="detail-value">
+                            {{ teacher.user.email }}
+                        </span>
+                    </div>
+
+                    <div class="detail-row">
+                        <span class="detail-label">Phone</span>
+                        <span class="detail-value">
+                            {{ teacher.phone }}
+                        </span>
+                    </div>
+
+                    <div class="detail-row">
+                        <span class="detail-label">Department</span>
+                        <span class="detail-value">
+                            {{ teacher.department }}
+                        </span>
+                    </div>
+
+                    <div class="detail-row">
+                        <span class="detail-label">Registration Status</span>
+                        <span class="status status-{{ teacher.status|lower }}">
+                            {{ teacher.status }}
+                        </span>
+                    </div>
+                </div>
+
+                {% if teacher.status == 'Approved' %}
+                    <div class="success-message">
+                        <strong>Registration Approved</strong>
+                        <p>
+                            Your registration has been approved. You can now
+                            log in using your Teacher ID and password.
+                        </p>
+                        <p>
+                            Teacher ID:
+                            <strong>{{ teacher.teacher_id|default:"Not assigned" }}</strong>
+                        </p>
+                    </div>
+
+                    <a href="{% url 'teacher_login' %}" class="btn">
+                        Teacher Login
+                    </a>
+
+                {% elif teacher.status == 'Pending' %}
+                    <div class="pending-message">
+                        <strong>Registration Pending</strong>
+                        <p>
+                            Your registration is currently under review.
+                            Please wait for an administrator to review your
+                            information. Your Teacher ID will be available
+                            after approval.
+                        </p>
+                    </div>
+
+                {% elif teacher.status == 'Rejected' %}
+                    <div class="error-message">
+                        <strong>Registration Rejected</strong>
+                        <p>
+                            Your registration has been rejected. Please
+                            contact the administrator for more information.
+                        </p>
+                    </div>
+                {% endif %}
+            {% endif %}
+
+            <hr>
+
+            <p class="register-text">
+                Need to register?
+                <a href="{% url 'teacher_register' %}">
+                    Teacher Registration
+                </a>
+            </p>
+
+            <a href="{% url 'home' %}" class="back-link">
+                ← Back to Home
+            </a>
+        </div>
+    </main>
+</body>
+</html>

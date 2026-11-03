@@ -1,0 +1,561 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | Smart Attendance</title>
+
+    <style>
+        :root {
+            --ink: #172033;
+            --muted: #687386;
+            --line: #e5eaf1;
+            --page: #f5f7fb;
+            --surface: #ffffff;
+            --blue: #3659d9;
+            --blue-light: #edf1ff;
+            --green: #188653;
+            --green-light: #e8f7ef;
+            --amber: #9a6500;
+            --amber-light: #fff4d8;
+            --shadow: 0 16px 42px rgba(28, 42, 74, 0.07);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            color: var(--ink);
+            background:
+                radial-gradient(ellipse at 10% 0%, #eef2ff 0, transparent 34rem),
+                var(--page);
+            font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI",
+                sans-serif;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .topbar {
+            display: flex;
+            min-height: 72px;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 max(22px, calc((100vw - 1080px) / 2));
+            border-bottom: 1px solid rgba(229, 234, 241, 0.9);
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(14px);
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 11px;
+            font-size: 14px;
+            font-weight: 750;
+        }
+
+        .brand-mark {
+            display: grid;
+            width: 39px;
+            height: 39px;
+            place-items: center;
+            border-radius: 13px;
+            color: white;
+            background: linear-gradient(145deg, #5275f4, #304fc9);
+            box-shadow: 0 7px 16px rgba(54, 89, 217, 0.23);
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .brand small {
+            display: block;
+            margin-top: 2px;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .top-link {
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 650;
+        }
+
+        .top-link:hover {
+            color: var(--blue);
+        }
+
+        .container {
+            width: min(100% - 36px, 1040px);
+            margin: 0 auto;
+            padding: 38px 0 52px;
+        }
+
+        .page-heading {
+            margin-bottom: 22px;
+        }
+
+        .eyebrow {
+            margin: 0 0 8px;
+            color: var(--blue);
+            font-size: 11px;
+            font-weight: 750;
+            letter-spacing: 0.13em;
+            text-transform: uppercase;
+        }
+
+        .page-heading h1 {
+            margin: 0;
+            font-size: clamp(27px, 4vw, 36px);
+            font-weight: 760;
+            letter-spacing: -0.04em;
+        }
+
+        .page-heading p {
+            margin: 9px 0 0;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .profile-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.8fr);
+            gap: 18px;
+            align-items: start;
+        }
+
+        .card {
+            border: 1px solid var(--line);
+            border-radius: 20px;
+            background: var(--surface);
+            box-shadow: var(--shadow);
+        }
+
+        .identity-card {
+            padding: 26px;
+        }
+
+        .identity-header {
+            display: flex;
+            align-items: center;
+            gap: 17px;
+            padding-bottom: 22px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .avatar {
+            display: grid;
+            width: 66px;
+            height: 66px;
+            flex: 0 0 auto;
+            place-items: center;
+            border-radius: 20px;
+            color: #314fc5;
+            background: var(--blue-light);
+            font-size: 25px;
+            font-weight: 750;
+        }
+
+        .identity-header h2 {
+            margin: 0;
+            font-size: 21px;
+            letter-spacing: -0.03em;
+        }
+
+        .identity-header p {
+            margin: 6px 0 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            margin-top: 11px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            color: var(--green);
+            background: var(--green-light);
+            font-size: 11px;
+            font-weight: 750;
+        }
+
+        .status::before {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: currentColor;
+            content: "";
+        }
+
+        .section {
+            padding-top: 22px;
+        }
+
+        .section h3 {
+            margin: 0 0 14px;
+            font-size: 14px;
+            font-weight: 750;
+        }
+
+        .details {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .detail {
+            min-width: 0;
+            padding: 14px;
+            border: 1px solid #edf0f5;
+            border-radius: 13px;
+            background: #fbfcfe;
+        }
+
+        .detail-label {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 650;
+        }
+
+        .detail-value {
+            display: block;
+            overflow-wrap: anywhere;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .face-card {
+            overflow: hidden;
+        }
+
+        .face-card-heading {
+            padding: 20px 20px 0;
+        }
+
+        .face-card-heading h2 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 750;
+        }
+
+        .face-card-heading p {
+            margin: 7px 0 0;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.55;
+        }
+
+        .face-photo-wrap {
+            display: grid;
+            min-height: 230px;
+            place-items: center;
+            margin: 18px 20px 0;
+            overflow: hidden;
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            background:
+                radial-gradient(circle at 50% 35%, #eef2ff, #e6ebf5);
+        }
+
+        .face-photo {
+            display: block;
+            width: 100%;
+            max-height: 330px;
+            object-fit: cover;
+        }
+
+        .face-placeholder {
+            padding: 25px;
+            color: var(--muted);
+            text-align: center;
+        }
+
+        .face-placeholder-icon {
+            display: grid;
+            width: 54px;
+            height: 54px;
+            place-items: center;
+            margin: 0 auto 12px;
+            border-radius: 17px;
+            color: var(--blue);
+            background: white;
+            font-size: 23px;
+        }
+
+        .face-placeholder strong {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--ink);
+            font-size: 13px;
+        }
+
+        .face-placeholder span {
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .face-card-footer {
+            padding: 16px 20px 20px;
+        }
+
+        .face-state {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            margin-bottom: 14px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 750;
+        }
+
+        .face-state.ready {
+            color: var(--green);
+            background: var(--green-light);
+        }
+
+        .face-state.missing {
+            color: var(--amber);
+            background: var(--amber-light);
+        }
+
+        .button {
+            display: inline-flex;
+            min-height: 42px;
+            align-items: center;
+            justify-content: center;
+            padding: 0 15px;
+            border: 1px solid transparent;
+            border-radius: 11px;
+            background: var(--blue);
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            transition: background 150ms ease, transform 150ms ease;
+        }
+
+        .button:hover {
+            transform: translateY(-1px);
+            background: #2949c7;
+        }
+
+        .button.secondary {
+            border-color: var(--line);
+            color: var(--ink);
+            background: white;
+        }
+
+        .button.secondary:hover {
+            background: #f8faff;
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 22px;
+        }
+
+        @media (max-width: 760px) {
+            .profile-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .face-card {
+                order: -1;
+            }
+
+            .face-photo-wrap {
+                min-height: 200px;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .topbar {
+                padding: 0 16px;
+            }
+
+            .top-link {
+                font-size: 12px;
+            }
+
+            .container {
+                width: min(100% - 24px, 520px);
+                padding-top: 26px;
+            }
+
+            .identity-card {
+                padding: 19px;
+            }
+
+            .details {
+                grid-template-columns: 1fr;
+            }
+
+            .identity-header {
+                align-items: flex-start;
+            }
+
+            .avatar {
+                width: 55px;
+                height: 55px;
+                border-radius: 17px;
+            }
+
+            .actions .button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="topbar">
+        <a href="{% url 'student_dashboard' %}" class="brand">
+            <span class="brand-mark">SA</span>
+            <span>
+                Smart Attendance
+                <small>Student Portal</small>
+            </span>
+        </a>
+
+        <a href="{% url 'student_dashboard' %}" class="top-link">
+            ← Back to dashboard
+        </a>
+    </header>
+
+    <main class="container">
+        <section class="page-heading">
+            <p class="eyebrow">Account</p>
+            <h1>My profile</h1>
+            <p>View your personal information and registered face photo.</p>
+        </section>
+
+        <div class="profile-layout">
+            <section class="card identity-card">
+                <div class="identity-header">
+                    <div class="avatar" aria-hidden="true">
+                        {{ student.user.first_name|first|upper }}
+                    </div>
+
+                    <div>
+                        <h2>{{ student.user.get_full_name|default:student.user.username }}</h2>
+                        <p>Student ID: {{ student.student_id|default:"Not assigned" }}</p>
+                        <span class="status">{{ student.status }}</span>
+                    </div>
+                </div>
+
+                <section class="section">
+                    <h3>Personal information</h3>
+                    <div class="details">
+                        <div class="detail">
+                            <span class="detail-label">Full name</span>
+                            <span class="detail-value">
+                                {{ student.user.get_full_name|default:"Not provided" }}
+                            </span>
+                        </div>
+
+                        <div class="detail">
+                            <span class="detail-label">Email address</span>
+                            <span class="detail-value">
+                                {{ student.user.email|default:"Not provided" }}
+                            </span>
+                        </div>
+
+                        <div class="detail">
+                            <span class="detail-label">Phone number</span>
+                            <span class="detail-value">
+                                {{ student.phone|default:"Not provided" }}
+                            </span>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <h3>Academic information</h3>
+                    <div class="details">
+                        <div class="detail">
+                            <span class="detail-label">Program</span>
+                            <span class="detail-value">
+                                {{ student.program.name|default:"Not assigned" }}
+                            </span>
+                        </div>
+
+                        <div class="detail">
+                            <span class="detail-label">Semester</span>
+                            <span class="detail-value">
+                                {{ student.semester|default:"Not assigned" }}
+                            </span>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="actions">
+                    <a href="{% url 'student_dashboard' %}" class="button secondary">
+                        Back to dashboard
+                    </a>
+                    <a href="{% url 'student_logout' %}" class="button secondary">
+                        Log out
+                    </a>
+                </div>
+            </section>
+
+            <aside class="card face-card">
+                <div class="face-card-heading">
+                    <h2>Registered face</h2>
+                    <p>
+                        This is the face photo associated with your account and
+                        used for face login.
+                    </p>
+                </div>
+
+                <div class="face-photo-wrap">
+                    {% if student.face_image %}
+                        <img
+                            src="{% url 'student_face_image' %}"
+                            alt="Your registered face photo"
+                            class="face-photo"
+                        >
+                    {% else %}
+                        <div class="face-placeholder">
+                            <div class="face-placeholder-icon" aria-hidden="true">◉</div>
+                            <strong>No face photo saved yet</strong>
+                            <span>Register or update your face to see it here.</span>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="face-card-footer">
+                    {% if student.face_registered and student.face_image %}
+                        <span class="face-state ready">Face registered</span>
+                    {% else %}
+                        <span class="face-state missing">Face photo not available</span>
+                    {% endif %}
+
+                    <br>
+
+                    <a href="{% url 'student_face_enroll' %}" class="button">
+                        {% if student.face_registered %}
+                            Update face registration
+                        {% else %}
+                            Set up face login
+                        {% endif %}
+                    </a>
+                </div>
+            </aside>
+        </div>
+    </main>
+</body>
+</html>

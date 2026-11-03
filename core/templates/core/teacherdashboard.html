@@ -1,0 +1,602 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Teacher Dashboard | Smart Attendance
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{% static 'core/teacherdashboard.css' %}"
+    >
+
+</head>
+
+<body>
+
+    <!-- =========================================
+         HEADER
+         ========================================= -->
+
+    <header>
+
+        <a
+            href="{% url 'teacher_dashboard' %}"
+            class="brand"
+        >
+            Smart Attendance
+        </a>
+
+        <!-- Logged-in Teacher Profile -->
+
+        <a
+            href="{% url 'teacher_profile' %}"
+            class="header-profile"
+        >
+
+            <div class="profile-icon">
+                {{ teacher.user.first_name|first|upper }}
+            </div>
+
+            <span class="profile-name">
+                {{ teacher.user.get_full_name }}
+            </span>
+
+        </a>
+
+    </header>
+
+
+    <!-- =========================================
+         MAIN CONTENT
+         ========================================= -->
+
+    <main class="container">
+
+
+        <!-- =========================================
+             WELCOME
+             ========================================= -->
+
+        <section class="dashboard-header">
+
+            <div>
+
+                <h2>
+                    Welcome,
+                    {{ teacher.user.get_full_name }}
+                </h2>
+
+                <p class="form-description">
+                    Manage attendance, grades, assignments
+                    and students.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================================
+             TEACHER SUMMARY
+             ========================================= -->
+
+        <section class="dashboard-stats">
+
+
+            <div class="stat-card">
+
+                <h3>
+                    My Classes
+                </h3>
+
+                <p>
+                    {{ total_classes }}
+                </p>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <h3>
+                    Total Students
+                </h3>
+
+                <p>
+                    {{ total_students }}
+                </p>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <h3>
+                    Assignments
+                </h3>
+
+                <p>
+                    --
+                </p>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <h3>
+                    Today's Attendance
+                </h3>
+
+                <p>
+                    --%
+                </p>
+
+            </div>
+
+
+        </section>
+
+
+        <!-- =========================================
+             MY CLASSES
+             ========================================= -->
+
+        <section class="card dashboard-section">
+
+            <h2>
+                My Classes
+            </h2>
+
+            <p class="form-description">
+                Classes assigned to you by the administrator.
+            </p>
+
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Class
+                            </th>
+
+                            <th>
+                                Program
+                            </th>
+
+                            <th>
+                                Semester
+                            </th>
+
+                            <th>
+                                Section
+                            </th>
+
+                            <th>
+                                Students
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for class_group in classes %}
+
+                        <tr>
+
+                            <td>
+                                {{ class_group.class_name }}
+                            </td>
+
+                            <td>
+                                {{ class_group.program }}
+                            </td>
+
+                            <td>
+                                {{ class_group.semester }}
+                            </td>
+
+                            <td>
+                                {{ class_group.section }}
+                            </td>
+
+                            <td>
+                                {{ class_group.students.count }}
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+
+                            <td colspan="5">
+                                No classes assigned yet.
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================================
+             ATTENDANCE MANAGEMENT
+             ========================================= -->
+
+        <section class="card dashboard-section">
+
+            <h2>
+                Attendance Management
+            </h2>
+
+            <p class="form-description">
+                Record and monitor attendance for your
+                assigned students.
+            </p>
+
+
+            <div class="dashboard-actions">
+
+
+                <button
+                    type="button"
+                    class="btn"
+                    onclick="location.href='takeattendance.html'"
+                >
+                    Take Attendance
+                </button>
+
+
+                <button
+                    type="button"
+                    class="btn"
+                    onclick="location.href='todayattendance.html'"
+                >
+                    Today's Attendance
+                </button>
+
+
+                <button
+                    type="button"
+                    class="btn"
+                    onclick="location.href='t-dbattendancehistory.html'"
+                >
+                    Attendance History
+                </button>
+
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================================
+             MY STUDENTS
+             ========================================= -->
+
+        <section class="card dashboard-section">
+
+            <h2>
+                My Students
+            </h2>
+
+            <p class="form-description">
+                View attendance and academic information
+                of your assigned students.
+            </p>
+
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Student ID
+                            </th>
+
+                            <th>
+                                Name
+                            </th>
+
+                            <th>
+                                Class
+                            </th>
+
+                            <th>
+                                Attendance
+                            </th>
+
+                            <th>
+                                Action
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for student in students %}
+
+                        <tr>
+
+                            <td>
+                                {{ student.student_id }}
+                            </td>
+
+                            <td>
+                                {{ student.user.get_full_name }}
+                            </td>
+
+                            <td>
+                                {{ student.class_name }}
+                            </td>
+
+                            <td>
+                                {{ student.attendance_percentage }}%
+                            </td>
+
+                            <td>
+
+                                <button
+                                    type="button"
+                                    class="small-btn"
+                                    onclick="location.href='{% url 'teacher_view_student' student.id %}'"
+                                >
+                                    View
+                                </button>
+
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+
+                            <td colspan="5">
+                                No students assigned to your classes yet.
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================================
+             GRADE MANAGEMENT
+             ========================================= -->
+
+        <section class="card dashboard-section">
+
+            <h2>
+                Grade Management
+            </h2>
+
+            <p class="form-description">
+                Add, update and view grades for your
+                students.
+            </p>
+
+
+            <div class="dashboard-actions">
+
+
+                <button
+                    type="button"
+                    class="btn"
+                    onclick="location.href='addgrade.html'"
+                >
+                    Add Grades
+                </button>
+
+
+                <button
+                    type="button"
+                    class="btn"
+                    onclick="location.href='viewgrade.html'"
+                >
+                    View Grades
+                </button>
+
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================================
+             ASSIGNMENT MANAGEMENT
+             ========================================= -->
+
+        <section class="card dashboard-section">
+
+            <h2>
+                Assignment Management
+            </h2>
+
+            <p class="form-description">
+                Create assignments, view submissions and
+                grade student work.
+            </p>
+
+
+            <div class="dashboard-actions">
+
+
+                <button
+                    type="button"
+                    class="btn"
+                    onclick="location.href='createassignment.html'"
+                >
+                    Create Assignment
+                </button>
+
+
+                <button
+                    type="button"
+                    class="btn"
+                    onclick="location.href='viewassignment.html'"
+                >
+                    View Assignments
+                </button>
+
+
+                <button
+                    type="button"
+                    class="btn"
+                    onclick="location.href='viewsubmission.html'"
+                >
+                    View Submissions
+                </button>
+
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================================
+             STUDENT ACADEMIC INFORMATION
+             ========================================= -->
+
+        <section class="card dashboard-section">
+
+            <h2>
+                Student Academic Information
+            </h2>
+
+            <p class="form-description">
+                Access attendance, grades and assignment
+                information for your students.
+            </p>
+
+
+            <div class="dashboard-actions">
+
+
+                <button
+                    type="button"
+                    class="btn"
+                    onclick="location.href='studentattendance.html'"
+                >
+                    Student Attendance
+                </button>
+
+
+                <button
+                    type="button"
+                    class="btn"
+                    onclick="location.href='studentgrade.html'"
+                >
+                    Student Grades
+                </button>
+
+
+                <button
+                    type="button"
+                    class="btn"
+                    onclick="location.href='studentassignment.html'"
+                >
+                    Student Assignments
+                </button>
+
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================================
+             MY PROFILE
+             ========================================= -->
+
+        <section class="card dashboard-section">
+
+            <h2>
+                My Profile
+            </h2>
+
+            <p class="form-description">
+                View your teacher account information.
+            </p>
+
+
+            <div class="dashboard-actions">
+
+                <button
+                    type="button"
+                    class="btn"
+                    onclick="location.href='{% url 'teacher_profile' %}'"
+                >
+                    View My Profile
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================================
+             LOGOUT
+             ========================================= -->
+
+        <section class="logout-section">
+
+            <a
+                href="{% url 'teacher_logout' %}"
+                class="logout-btn"
+            >
+                Logout
+            </a>
+
+        </section>
+
+
+    </main>
+
+
+</body>
+
+</html>

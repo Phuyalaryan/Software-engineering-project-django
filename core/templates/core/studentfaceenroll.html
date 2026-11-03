@@ -1,0 +1,280 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Enrollment | Smart Attendance</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            padding: 24px;
+            display: grid;
+            place-items: center;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            color: #172033;
+            background: #f3f6fb;
+        }
+        .card {
+            width: min(100%, 680px);
+            padding: clamp(20px, 5vw, 36px);
+            background: #fff;
+            border: 1px solid #e1e6ed;
+            border-radius: 16px;
+            box-shadow: 0 12px 32px rgba(23, 32, 51, .09);
+        }
+        .eyebrow {
+            color: #2457d6;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: .12em;
+        }
+        h1 { margin: 10px 0; font-size: clamp(25px, 5vw, 34px); }
+        .intro { color: #5d687a; line-height: 1.6; }
+        .identity {
+            margin: 20px 0;
+            padding: 14px 16px;
+            border: 1px solid #e1e6ed;
+            border-radius: 10px;
+            background: #f8faff;
+        }
+        .camera-frame {
+            position: relative;
+            min-height: 220px;
+            overflow: hidden;
+            background: #101828;
+            border-radius: 12px;
+        }
+        video, #preview {
+            display: block;
+            width: 100%;
+            max-height: 440px;
+            aspect-ratio: 4 / 3;
+            object-fit: cover;
+        }
+        #preview { display: none; }
+        .camera-placeholder {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            place-items: center;
+            padding: 24px;
+            color: #d8deea;
+            text-align: center;
+            pointer-events: none;
+        }
+        .camera-frame.active .camera-placeholder { display: none; }
+        .camera-frame.show-preview video { display: none; }
+        .camera-frame.show-preview #preview { display: block; }
+        .tips { margin: 16px 0 22px; padding-left: 20px; color: #5d687a; line-height: 1.7; }
+        .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+        button, .link-button {
+            min-height: 44px;
+            padding: 11px 16px;
+            border: 1px solid transparent;
+            border-radius: 8px;
+            font: inherit;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        button.primary { color: white; background: #2457d6; }
+        button.secondary, .link-button { color: #2457d6; background: #edf2ff; }
+        button:disabled { cursor: not-allowed; opacity: .55; }
+        #status {
+            min-height: 24px;
+            margin: 18px 0 0;
+            line-height: 1.5;
+        }
+        #status[data-state="error"] { color: #b42318; }
+        #status[data-state="success"] { color: #247a46; }
+        .privacy-note { margin-top: 20px; color: #6c7789; font-size: 13px; line-height: 1.55; }
+        @media (max-width: 520px) {
+            body { padding: 12px; }
+            .card { border-radius: 12px; }
+            .actions > * { width: 100%; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <main class="card">
+        <span class="eyebrow">STUDENT SECURITY</span>
+        <h1>Register your face</h1>
+        <p class="intro">
+            Set up face verification for your student account. You must be
+            approved and signed in to enroll.
+        </p>
+
+        <div class="identity">
+            <strong>{{ student.user.get_full_name }}</strong><br>
+            Student ID: <strong>{{ student.student_id }}</strong>
+        </div>
+
+        <div id="cameraFrame" class="camera-frame">
+            <video id="camera" autoplay muted playsinline aria-label="Live camera preview"></video>
+            <img id="preview" alt="Captured face preview">
+            <div class="camera-placeholder" id="cameraPlaceholder">
+                Select “Start camera” to begin. Your browser will ask for camera permission.
+            </div>
+        </div>
+
+        <ul class="tips">
+            <li>Use a bright, even light and look directly at the camera.</li>
+            <li>Keep your face centered and make sure only one person is visible.</li>
+            <li>Review the captured frame before registering it.</li>
+        </ul>
+
+        <form id="enrollForm" method="post" action="{% url 'student_face_enroll' %}">
+            {% csrf_token %}
+            <input type="hidden" id="imageData" name="image_data">
+
+            <div class="actions">
+                <button class="secondary" type="button" id="startCamera">Start camera</button>
+                <button class="secondary" type="button" id="captureButton" disabled>Capture face</button>
+                <button class="secondary" type="button" id="retakeButton" hidden>Retake</button>
+                <button class="primary" type="submit" id="enrollButton" disabled>Register face</button>
+                <a class="link-button" href="{% url 'student_profile' %}">Back to profile</a>
+            </div>
+        </form>
+
+        <p id="status" role="status" aria-live="polite"></p>
+        <p class="privacy-note">
+            The captured frame is sent to this Django app to create a numeric
+            face template. The photo itself is not saved by this page.
+        </p>
+        <canvas id="captureCanvas" hidden></canvas>
+    </main>
+
+    <script>
+        const video = document.getElementById("camera");
+        const frame = document.getElementById("cameraFrame");
+        const form = document.getElementById("enrollForm");
+        const imageDataInput = document.getElementById("imageData");
+        const canvas = document.getElementById("captureCanvas");
+        const preview = document.getElementById("preview");
+        const statusText = document.getElementById("status");
+        const startButton = document.getElementById("startCamera");
+        const captureButton = document.getElementById("captureButton");
+        const retakeButton = document.getElementById("retakeButton");
+        const enrollButton = document.getElementById("enrollButton");
+
+        let cameraStream = null;
+
+        function setStatus(message, state = "") {
+            statusText.textContent = message;
+            statusText.dataset.state = state;
+        }
+
+        function stopCamera() {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+                cameraStream = null;
+            }
+            video.srcObject = null;
+            frame.classList.remove("active");
+        }
+
+        startButton.addEventListener("click", async () => {
+            setStatus("");
+
+            if (!navigator.mediaDevices?.getUserMedia) {
+                setStatus("Camera access is unavailable. Open this page on localhost or a secure site.", "error");
+                return;
+            }
+
+            try {
+                cameraStream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: "user", width: { ideal: 640 }, height: { ideal: 480 } },
+                    audio: false
+                });
+                video.srcObject = cameraStream;
+                await video.play();
+                frame.classList.add("active");
+                startButton.disabled = true;
+                captureButton.disabled = false;
+                setStatus("Camera ready. Center your face, then capture.");
+            } catch (error) {
+                stopCamera();
+                setStatus("Could not open the camera. Check browser permission and try again.", "error");
+            }
+        });
+
+        captureButton.addEventListener("click", () => {
+            if (!cameraStream || !video.videoWidth) {
+                setStatus("Start the camera and wait for the preview before capturing.", "error");
+                return;
+            }
+
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            const imageData = canvas.toDataURL("image/jpeg", 0.9);
+            imageDataInput.value = imageData;
+            preview.src = imageData;
+            frame.classList.add("show-preview");
+
+            stopCamera();
+            frame.classList.add("show-preview");
+            captureButton.disabled = true;
+            retakeButton.hidden = false;
+            enrollButton.disabled = false;
+            setStatus("Review the image. Register it or retake the capture.");
+        });
+
+        retakeButton.addEventListener("click", () => {
+            imageDataInput.value = "";
+            preview.removeAttribute("src");
+            frame.classList.remove("show-preview");
+            retakeButton.hidden = true;
+            enrollButton.disabled = true;
+            captureButton.disabled = true;
+            startButton.disabled = false;
+            setStatus("Start the camera to take another capture.");
+        });
+
+        form.addEventListener("submit", async event => {
+            event.preventDefault();
+
+            if (!imageDataInput.value) {
+                setStatus("Capture your face before registering.", "error");
+                return;
+            }
+
+            enrollButton.disabled = true;
+            captureButton.disabled = true;
+            retakeButton.disabled = true;
+            setStatus("Checking the captured face…");
+
+            try {
+                const response = await fetch(form.action, {
+                    method: "POST",
+                    body: new FormData(form),
+                    credentials: "same-origin",
+                    headers: { "X-Requested-With": "XMLHttpRequest" }
+                });
+                const result = await response.json().catch(() => ({}));
+
+                if (!response.ok || !result.ok) {
+                    throw new Error(result.message || "Enrollment failed. Please try again.");
+                }
+
+                setStatus(result.message || "Face enrollment completed.", "success");
+                imageDataInput.value = "";
+                enrollButton.hidden = true;
+                captureButton.hidden = true;
+                retakeButton.hidden = true;
+                startButton.hidden = true;
+            } catch (error) {
+                setStatus(error.message, "error");
+                enrollButton.disabled = false;
+                retakeButton.disabled = false;
+            }
+        });
+
+        window.addEventListener("pagehide", stopCamera);
+    </script>
+</body>
+</html>

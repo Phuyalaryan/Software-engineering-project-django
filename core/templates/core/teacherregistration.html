@@ -1,0 +1,498 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Registration | Smart Attendance</title>
+
+    <link rel="stylesheet" href="{% static 'core/teacherregistration.css' %}">
+
+    <style>
+        .face-capture-box {
+            max-width: 560px;
+            margin-top: 12px;
+        }
+
+        #faceCamera,
+        #facePreview {
+            display: none;
+            width: 100%;
+            max-height: 420px;
+            aspect-ratio: 4 / 3;
+            object-fit: cover;
+            border-radius: 12px;
+            background: #111827;
+        }
+
+        .face-camera-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        #faceCameraStatus {
+            min-height: 24px;
+        }
+
+        @media (max-width: 560px) {
+            .face-camera-actions > * {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<header class="site-header">
+    <div class="header-inner">
+        <a href="{% url 'home' %}" class="brand">
+            <span class="brand-mark">SA</span>
+            <span class="brand-text">
+                <strong>Smart Attendance</strong>
+                <span>Management System</span>
+            </span>
+        </a>
+        <span class="portal-label">Teacher Portal</span>
+    </div>
+</header>
+
+<main class="page-wrapper">
+    <div class="registration-card">
+        <div class="page-heading">
+            <span class="eyebrow">TEACHER REGISTRATION</span>
+            <h1>Create your teacher account</h1>
+            <p>
+                Submit your information and face capture to request access
+                to the Smart Attendance teacher portal.
+            </p>
+        </div>
+
+        {% if error %}
+            <div class="backend-error" role="alert">{{ error }}</div>
+        {% endif %}
+
+        {% if success %}
+            <div class="success-message" role="status">{{ success }}</div>
+        {% endif %}
+
+        <form method="POST" id="teacherRegistrationForm">
+            {% csrf_token %}
+
+            <section class="form-section">
+                <div class="section-heading">
+                    <span class="section-number">01</span>
+                    <div>
+                        <h2>Personal Information</h2>
+                        <p>Enter your name and contact details.</p>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="firstName">First Name <span>*</span></label>
+                        <input
+                            type="text"
+                            id="firstName"
+                            name="firstName"
+                            value="{{ request.POST.firstName|default:'' }}"
+                            placeholder="Enter your first name"
+                            autocomplete="given-name"
+                            required
+                        >
+                        <div class="error-message" id="firstNameError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lastName">Last Name <span>*</span></label>
+                        <input
+                            type="text"
+                            id="lastName"
+                            name="lastName"
+                            value="{{ request.POST.lastName|default:'' }}"
+                            placeholder="Enter your last name"
+                            autocomplete="family-name"
+                            required
+                        >
+                        <div class="error-message" id="lastNameError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="teacherEmail">Email Address <span>*</span></label>
+                        <input
+                            type="email"
+                            id="teacherEmail"
+                            name="teacherEmail"
+                            value="{{ request.POST.teacherEmail|default:'' }}"
+                            placeholder="you@example.com"
+                            autocomplete="email"
+                            required
+                        >
+                        <p class="field-hint">Use an email address you can access.</p>
+                        <div class="error-message" id="emailError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="teacherPhone">Phone Number <span>*</span></label>
+                        <input
+                            type="tel"
+                            id="teacherPhone"
+                            name="teacherPhone"
+                            value="{{ request.POST.teacherPhone|default:'' }}"
+                            placeholder="98XXXXXXXX"
+                            maxlength="10"
+                            inputmode="numeric"
+                            autocomplete="tel"
+                            required
+                        >
+                        <p class="field-hint">Enter your 10-digit mobile number.</p>
+                        <div class="error-message" id="phoneError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="department">Department <span>*</span></label>
+                        <select id="department" name="department" required>
+                            <option value="" disabled
+                                {% if not request.POST.department %}selected{% endif %}>
+                                Select your department
+                            </option>
+                            <option value="BSc CSIT"
+                                {% if request.POST.department == "BSc CSIT" %}selected{% endif %}>
+                                BSc CSIT
+                            </option>
+                            <option value="BBA"
+                                {% if request.POST.department == "BBA" %}selected{% endif %}>
+                                BBA
+                            </option>
+                            <option value="BBS"
+                                {% if request.POST.department == "BBS" %}selected{% endif %}>
+                                BBS
+                            </option>
+                            <option value="BBM"
+                                {% if request.POST.department == "BBM" %}selected{% endif %}>
+                                BBM
+                            </option>
+                            <option value="BCA"
+                                {% if request.POST.department == "BCA" %}selected{% endif %}>
+                                BCA
+                            </option>
+                            <option value="BHM"
+                                {% if request.POST.department == "BHM" %}selected{% endif %}>
+                                BHM
+                            </option>
+                            <option value="BIM"
+                                {% if request.POST.department == "BIM" %}selected{% endif %}>
+                                BIM
+                            </option>
+                            <option value="BIT"
+                                {% if request.POST.department == "BIT" %}selected{% endif %}>
+                                BIT
+                            </option>
+                        </select>
+                        <p class="field-hint">Select the program you teach.</p>
+                        <div class="error-message" id="departmentError"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="form-section">
+                <div class="section-heading">
+                    <span class="section-number">02</span>
+                    <div>
+                        <h2>Account Security</h2>
+                        <p>Create the password you will use to log in.</p>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="teacherPassword">Password <span>*</span></label>
+                        <input
+                            type="password"
+                            id="teacherPassword"
+                            name="teacherPassword"
+                            placeholder="Create a password"
+                            minlength="8"
+                            autocomplete="new-password"
+                            required
+                        >
+                        <p class="field-hint">Use at least 8 characters.</p>
+                        <div class="error-message" id="passwordError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password <span>*</span></label>
+                        <input
+                            type="password"
+                            id="confirmPassword"
+                            name="confirmPassword"
+                            placeholder="Enter your password again"
+                            minlength="8"
+                            autocomplete="new-password"
+                            required
+                        >
+                        <div class="error-message" id="confirmPasswordError"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="form-section">
+                <div class="section-heading">
+                    <span class="section-number">03</span>
+                    <div>
+                        <h2>Face Registration</h2>
+                        <p>Capture your face for your account registration.</p>
+                    </div>
+                </div>
+
+                <div class="face-capture-box">
+                    <video
+                        id="faceCamera"
+                        autoplay
+                        muted
+                        playsinline
+                        aria-label="Live camera preview"
+                    ></video>
+
+                    <img id="facePreview" alt="Captured face preview">
+                    <canvas id="faceCanvas" hidden></canvas>
+                    <input type="hidden" id="faceImageData" name="image_data">
+
+                    <div class="face-camera-actions">
+                        <button type="button" id="startFaceCamera" class="secondary-button">
+                            Start camera
+                        </button>
+                        <button type="button" id="captureFace" class="secondary-button" disabled>
+                            Capture face
+                        </button>
+                        <button type="button" id="retakeFace" class="secondary-button" hidden>
+                            Retake
+                        </button>
+                    </div>
+
+                    <p id="faceCameraStatus" role="status" aria-live="polite">
+                        Capture a face photo before submitting your registration.
+                    </p>
+                </div>
+            </section>
+
+            <button type="submit" class="submit-button">
+                Submit Teacher Registration
+            </button>
+
+            <div class="approval-notice">
+                <div class="notice-icon">i</div>
+                <div class="notice-content">
+                    <strong>Registration requires administrator approval</strong>
+                    <p>
+                        Your information will be reviewed by the administrator.
+                        You will be able to access the teacher portal after your
+                        account is approved.
+                    </p>
+                </div>
+            </div>
+
+            <div class="bottom-links">
+                <a href="{% url 'home' %}" class="secondary-button">
+                    Back to Home
+                </a>
+            </div>
+
+            <div class="bottom-info">
+                <p>
+                    Already have an approved account?
+                    <a href="{% url 'teacher_login' %}">Teacher Login</a>
+                </p>
+            </div>
+        </form>
+    </div>
+</main>
+
+<footer class="site-footer">
+    <p>© 2026 Smart Attendance Management System</p>
+</footer>
+
+<script>
+    const registrationForm = document.getElementById("teacherRegistrationForm");
+    const phoneInput = document.getElementById("teacherPhone");
+
+    const faceVideo = document.getElementById("faceCamera");
+    const faceCanvas = document.getElementById("faceCanvas");
+    const facePreview = document.getElementById("facePreview");
+    const faceImageData = document.getElementById("faceImageData");
+    const faceStatus = document.getElementById("faceCameraStatus");
+    const startFaceCameraButton = document.getElementById("startFaceCamera");
+    const captureFaceButton = document.getElementById("captureFace");
+    const retakeFaceButton = document.getElementById("retakeFace");
+
+    let faceCameraStream = null;
+
+    phoneInput.addEventListener("input", function () {
+        this.value = this.value.replace(/\D/g, "").slice(0, 10);
+    });
+
+    function stopFaceCamera() {
+        if (faceCameraStream) {
+            faceCameraStream.getTracks().forEach(track => track.stop());
+            faceCameraStream = null;
+        }
+        faceVideo.srcObject = null;
+    }
+
+    startFaceCameraButton.addEventListener("click", async function () {
+        faceStatus.textContent = "";
+
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            faceStatus.textContent =
+                "Camera access is unavailable. Open the site using localhost or HTTPS.";
+            return;
+        }
+
+        try {
+            faceCameraStream = await navigator.mediaDevices.getUserMedia({
+                video: {
+                    facingMode: "user",
+                    width: { ideal: 640 },
+                    height: { ideal: 480 }
+                },
+                audio: false
+            });
+
+            faceVideo.srcObject = faceCameraStream;
+            await faceVideo.play();
+
+            faceVideo.style.display = "block";
+            facePreview.style.display = "none";
+            startFaceCameraButton.disabled = true;
+            captureFaceButton.disabled = false;
+            faceStatus.textContent =
+                "Camera ready. Center your face and capture it.";
+        } catch (error) {
+            stopFaceCamera();
+            faceStatus.textContent =
+                "Could not open the camera. Check your browser camera permission.";
+        }
+    });
+
+    captureFaceButton.addEventListener("click", function () {
+        if (!faceCameraStream || !faceVideo.videoWidth) {
+            faceStatus.textContent =
+                "Start the camera and wait for the preview before capturing.";
+            return;
+        }
+
+        const maxWidth = 800;
+        const scale = Math.min(1, maxWidth / faceVideo.videoWidth);
+        faceCanvas.width = Math.round(faceVideo.videoWidth * scale);
+        faceCanvas.height = Math.round(faceVideo.videoHeight * scale);
+
+        faceCanvas
+            .getContext("2d")
+            .drawImage(faceVideo, 0, 0, faceCanvas.width, faceCanvas.height);
+
+        faceImageData.value = faceCanvas.toDataURL("image/jpeg", 0.85);
+        facePreview.src = faceImageData.value;
+
+        faceVideo.style.display = "none";
+        facePreview.style.display = "block";
+        stopFaceCamera();
+
+        captureFaceButton.disabled = true;
+        retakeFaceButton.hidden = false;
+        faceStatus.textContent =
+            "Face captured. Review it, then submit your registration.";
+    });
+
+    retakeFaceButton.addEventListener("click", function () {
+        faceImageData.value = "";
+        facePreview.removeAttribute("src");
+        facePreview.style.display = "none";
+
+        retakeFaceButton.hidden = true;
+        captureFaceButton.disabled = true;
+        startFaceCameraButton.disabled = false;
+        faceStatus.textContent = "Start the camera to capture your face again.";
+    });
+
+    registrationForm.addEventListener("submit", function (event) {
+        let valid = true;
+
+        const firstName = document.getElementById("firstName").value.trim();
+        const lastName = document.getElementById("lastName").value.trim();
+        const email = document.getElementById("teacherEmail").value.trim();
+        const phone = phoneInput.value.trim();
+        const department = document.getElementById("department").value;
+        const password = document.getElementById("teacherPassword").value;
+        const confirmPassword = document.getElementById("confirmPassword").value;
+
+        const firstNameError = document.getElementById("firstNameError");
+        const lastNameError = document.getElementById("lastNameError");
+        const emailError = document.getElementById("emailError");
+        const phoneError = document.getElementById("phoneError");
+        const departmentError = document.getElementById("departmentError");
+        const passwordError = document.getElementById("passwordError");
+        const confirmPasswordError = document.getElementById("confirmPasswordError");
+
+        [
+            firstNameError,
+            lastNameError,
+            emailError,
+            phoneError,
+            departmentError,
+            passwordError,
+            confirmPasswordError
+        ].forEach(node => node.textContent = "");
+
+        if (!faceImageData.value) {
+            faceStatus.textContent =
+                "Capture your face before submitting your registration.";
+            valid = false;
+        }
+
+        const namePattern = /^[A-Za-z]+(?:[ '-][A-Za-z]+)*$/;
+
+        if (!namePattern.test(firstName)) {
+            firstNameError.textContent = "Please enter a valid first name.";
+            valid = false;
+        }
+
+        if (!namePattern.test(lastName)) {
+            lastNameError.textContent = "Please enter a valid last name.";
+            valid = false;
+        }
+
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            emailError.textContent = "Please enter a valid email address.";
+            valid = false;
+        }
+
+        if (!/^\d{10}$/.test(phone)) {
+            phoneError.textContent = "Phone number must contain exactly 10 digits.";
+            valid = false;
+        }
+
+        if (!department) {
+            departmentError.textContent = "Please select your department.";
+            valid = false;
+        }
+
+        if (password.length < 8) {
+            passwordError.textContent = "Password must contain at least 8 characters.";
+            valid = false;
+        }
+
+        if (password !== confirmPassword) {
+            confirmPasswordError.textContent = "Passwords do not match.";
+            valid = false;
+        }
+
+        if (!valid) {
+            event.preventDefault();
+        }
+    });
+
+    window.addEventListener("pagehide", stopFaceCamera);
+</script>
+</body>
+</html>

@@ -1,0 +1,191 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Admin Login | Smart Attendance
+    </title>
+
+    <!-- Common UI CSS -->
+    <link
+        rel="stylesheet"
+        href="{% static 'core/teacherlogin.css' %}"
+    >
+
+    <!-- Admin Login CSS -->
+    <link
+        rel="stylesheet"
+        href="{% static 'core/adminlogin.css' %}"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         COMMON SITE HEADER
+         ===================================================== -->
+
+    <header class="site-header">
+
+        <div class="site-header-inner">
+
+            <a
+                href="/"
+                class="site-logo"
+            >
+                Smart Attendance
+            </a>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         ADMIN LOGIN
+         ===================================================== -->
+
+    <main class="container">
+
+        <div class="login-card">
+
+
+            <!-- =================================================
+                 LOGIN HEADER
+                 ================================================= -->
+
+            <div class="login-header">
+
+                <div class="admin-icon">
+                    A
+                </div>
+
+                <h1>
+                    Administrator Login
+                </h1>
+
+                <p>
+                    Login to access the administrator dashboard.
+                </p>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 LOGIN FORM
+                 ================================================= -->
+
+            <form
+                method="POST"
+                class="login-form"
+            >
+
+                {% csrf_token %}
+
+
+                <!-- Username -->
+
+                <div class="form-group">
+
+                    <label for="adminUsername">
+                        Username
+                    </label>
+
+                    <input
+                        type="text"
+                        id="adminUsername"
+                        name="adminUsername"
+                        placeholder="Enter your username"
+                        autocomplete="username"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- Password -->
+
+                <div class="form-group">
+
+                    <label for="adminPassword">
+                        Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="adminPassword"
+                        name="adminPassword"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- Error Message -->
+
+                {% if error %}
+
+                    <p class="error-message">
+                        {{ error }}
+                    </p>
+
+                {% endif %}
+
+
+
+                <!-- Login Button -->
+
+                <button
+                    type="submit"
+                    class="login-btn"
+                >
+                    Login
+                </button>
+
+            </form>
+
+
+
+            <!-- =================================================
+                 LOGIN FOOTER
+                 ================================================= -->
+
+            <div class="login-footer">
+
+                <a
+                    href="/"
+                    class="home-link"
+                >
+                    ← Back to Home
+                </a>
+
+            </div>
+
+
+        </div>
+
+    </main>
+
+
+</body>
+
+</html>

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Student | Smart Attendance</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 24px;
+            background: #f3f6fb;
+            color: #172033;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            width: min(100%, 800px);
+            margin: 0 auto;
+        }
+
+        .card {
+            padding: clamp(20px, 5vw, 36px);
+            background: #fff;
+            border: 1px solid #e1e6ed;
+            border-radius: 14px;
+            box-shadow: 0 10px 28px rgba(23, 32, 51, .08);
+        }
+
+        h1 {
+            margin-top: 0;
+        }
+
+        .intro {
+            color: #5d687a;
+            line-height: 1.5;
+        }
+
+        .details {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+            margin: 24px 0;
+        }
+
+        .detail {
+            padding: 14px;
+            border: 1px solid #e1e6ed;
+            border-radius: 9px;
+            overflow-wrap: anywhere;
+        }
+
+        .label {
+            display: block;
+            margin-bottom: 6px;
+            color: #687386;
+            font-size: 13px;
+        }
+
+        .value {
+            font-weight: 700;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 6px 11px;
+            border-radius: 20px;
+            background: #fff3d6;
+            color: #805600;
+        }
+
+        .face-section {
+            margin-top: 26px;
+        }
+
+        .face-photo {
+            display: block;
+            width: min(100%, 420px);
+            max-height: 420px;
+            object-fit: cover;
+            border: 1px solid #e1e6ed;
+            border-radius: 12px;
+            background: #f3f6fb;
+        }
+
+        .no-photo {
+            padding: 16px;
+            border: 1px dashed #aab4c3;
+            border-radius: 9px;
+            color: #687386;
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        button,
+        .back-link {
+            display: inline-block;
+            min-height: 44px;
+            padding: 12px 18px;
+            border: 0;
+            border-radius: 8px;
+            font: inherit;
+            font-weight: 700;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .approve {
+            background: #16834a;
+            color: #fff;
+        }
+
+        .reject {
+            background: #c63737;
+            color: #fff;
+        }
+
+        .back-link {
+            background: #edf2ff;
+            color: #2457d6;
+        }
+
+        @media (max-width: 560px) {
+            body {
+                padding: 12px;
+            }
+
+            .details {
+                grid-template-columns: 1fr;
+            }
+
+            .actions > * {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="container">
+        <section class="card">
+            <h1>Review Student Registration</h1>
+            <p class="intro">
+                Review the student's information and registered face before
+                approving the registration.
+            </p>
+
+            <h2>Student Information</h2>
+
+            <div class="details">
+                <div class="detail">
+                    <span class="label">Full Name</span>
+                    <span class="value">
+                        {{ student.user.get_full_name|default:"Name not provided" }}
+                    </span>
+                </div>
+
+                <div class="detail">
+                    <span class="label">Email</span>
+                    <span class="value">
+                        {{ student.user.email|default:"Not provided" }}
+                    </span>
+                </div>
+
+                <div class="detail">
+                    <span class="label">Phone Number</span>
+                    <span class="value">
+                        {{ student.phone|default:"Not provided" }}
+                    </span>
+                </div>
+
+                <div class="detail">
+                    <span class="label">Program</span>
+                    <span class="value">
+                        {{ student.program|default:"Not assigned" }}
+                    </span>
+                </div>
+
+                <div class="detail">
+                    <span class="label">Semester</span>
+                    <span class="value">
+                        {{ student.semester|default:"Not assigned" }}
+                    </span>
+                </div>
+
+                <div class="detail">
+                    <span class="label">Current Status</span>
+                    <span class="value status">{{ student.status }}</span>
+                </div>
+
+                <div class="detail">
+                    <span class="label">Student ID</span>
+                    <span class="value">
+                        {{ student.student_id|default:"Not Assigned" }}
+                    </span>
+                </div>
+            </div>
+
+            <section class="face-section">
+                <h2>Registered Face</h2>
+
+                {% if student.face_image %}
+                    <img
+                        class="face-photo"
+                        src="{% url 'admin_student_face_image' student.id %}"
+                        alt="Registered face for {{ student.user.get_full_name }}"
+                    >
+                {% else %}
+                    <p class="no-photo">
+                        No face photo is saved for this student.
+                    </p>
+                {% endif %}
+            </section>
+
+            {% if student.status == "Pending" %}
+                <div class="actions">
+                    <form
+                        method="POST"
+                        action="{% url 'approve_student' student.id %}"
+                        onsubmit="return confirm('Approve this student registration?');"
+                    >
+                        {% csrf_token %}
+                        <button type="submit" class="approve">
+                            Approve Registration
+                        </button>
+                    </form>
+
+                    <form
+                        method="POST"
+                        action="{% url 'reject_student' student.id %}"
+                        onsubmit="return confirm('Reject this student registration?');"
+                    >
+                        {% csrf_token %}
+                        <button type="submit" class="reject">
+                            Reject Registration
+                        </button>
+                    </form>
+                </div>
+            {% endif %}
+
+            <div class="actions">
+                <a href="{% url 'admin_dashboard' %}" class="back-link">
+                    ← Back to Admin Dashboard
+                </a>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
